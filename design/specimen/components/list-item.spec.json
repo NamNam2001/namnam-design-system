@@ -1,0 +1,34 @@
+{
+  "name": "ListItem",
+  "block": "list-item",
+  "layer": "widget",
+  "purpose": "One row: setting, device with a control, or read-only information.",
+  "css": "list-item.css",
+  "specimen": "list-item.html",
+  "factory": "listItem",
+  "elements": {
+    "leading": "Icon.",
+    "content": "Title and subtitle column; shrinks and truncates.",
+    "title": "Primary text, single line with ellipsis.",
+    "subtitle": "Secondary text, single line with ellipsis.",
+    "trailing": "Value, control (toggle) or chevron; never shrinks."
+  },
+  "modifiers": {
+    "behavior": ["interactive"]
+  },
+  "defaults": {},
+  "states": {
+    "hover": ":hover",
+    "pressed": ":active",
+    "focused": ":focus-visible",
+    "disabled": "[aria-disabled='true']"
+  },
+  "tokens": ["list-item"],
+  "dependsOn": [],
+  "behavior": [
+    "One tap target per row: an interactive row is a single button; a row with a toggle is not tappable itself.",
+    "Read-only rows give no touch feedback."
+  ],
+  "a11y": { "role": "listitem or button", "notes": "Interactive rows render as <button>." },
+  "lvgl": { "create": "nn_list_item_create", "notes": "Row flex container; interactive rows are clickable objects." }
+}

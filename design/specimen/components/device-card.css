@@ -134,7 +134,7 @@
   background: transparent;
   border: var(--nn-stroke-focus) solid var(--nn-device-card-meta-fg);
   border-right-color: transparent;
-  animation: nn-spin 800ms linear infinite;
+  animation: nn-spin var(--nn-motion-duration-spin) linear infinite;
 }
 
 /* ---- Modifier: interactive (whole card is a button) ---- */
@@ -168,10 +168,4 @@
 .nn-device-card--interactive[data-state='focused'] {
   outline: var(--nn-stroke-focus) solid var(--nn-focus-ring);
   outline-offset: var(--nn-stroke-focus-offset);
-}
-
-@keyframes nn-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }

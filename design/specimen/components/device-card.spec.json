@@ -1,0 +1,43 @@
+{
+  "name": "DeviceCard",
+  "block": "device-card",
+  "layer": "widget",
+  "purpose": "Summarize one device: identity, main value, on/off control and health.",
+  "css": "device-card.css",
+  "specimen": "device-card.html",
+  "factory": "deviceCard",
+  "elements": {
+    "header": "Icon on the left, control on the right.",
+    "icon": "Device glyph; filled when the device is on.",
+    "control": "Toggle placed in the header; its visible track stays inside the padding box.",
+    "title": "Device name, single line with ellipsis.",
+    "value": "Main reading or mode.",
+    "unit": "Unit suffix; must not grow the value's line box.",
+    "status": "Dot + text. The only part that changes for abnormal states."
+  },
+  "modifiers": {
+    "density": ["compact"],
+    "behavior": ["interactive"]
+  },
+  "defaults": {},
+  "states": {
+    "active": "[data-active='true']",
+    "pending": "[aria-busy='true']",
+    "warning": "[data-status='warning']",
+    "critical": "[data-status='critical']",
+    "info": "[data-status='info']",
+    "offline": "[data-status='offline']",
+    "hover": ":hover",
+    "pressed": ":active",
+    "focused": ":focus-visible"
+  },
+  "tokens": ["device-card"],
+  "dependsOn": ["toggle"],
+  "behavior": [
+    "Abnormal states change only the status row and icon, never the card color (ISA-101).",
+    "Offline shows stale values as secondary and disables the control.",
+    "A card is either one tap target (interactive) or contains a control, never both."
+  ],
+  "a11y": { "role": "group or button", "notes": "Status is aria-live=polite and always has text, not color alone." },
+  "lvgl": { "create": "nn_device_card_create", "notes": "Status and active are setters: nn_device_card_set_status(), nn_device_card_set_active()." }
+}

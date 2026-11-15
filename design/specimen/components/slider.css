@@ -123,6 +123,8 @@
 }
 
 .nn-setpoint__unit {
+  /* smaller inline text must not grow the value's line box */
+  line-height: 1;
   margin-left: var(--nn-space-2xs);
   color: var(--nn-text-secondary);
   font-size: var(--nn-setpoint-unit-size);
@@ -152,7 +154,7 @@
   border: var(--nn-stroke-focus) solid currentColor;
   border-right-color: transparent;
   border-radius: var(--nn-radius-pill);
-  animation: nn-spin 800ms linear infinite;
+  animation: nn-spin var(--nn-motion-duration-spin) linear infinite;
 }
 
 .nn-setpoint[data-error] .nn-setpoint__meta {
@@ -161,10 +163,4 @@
 
 .nn-setpoint[aria-disabled='true'] .nn-setpoint__value {
   color: var(--nn-text-secondary);
-}
-
-@keyframes nn-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }

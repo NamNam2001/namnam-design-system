@@ -1,0 +1,32 @@
+{
+  "name": "Toggle",
+  "block": "toggle",
+  "layer": "widget",
+  "purpose": "Turn one device or setting on or off.",
+  "css": "toggle.css",
+  "specimen": "toggle.html",
+  "factory": "toggle",
+  "elements": {
+    "track": "Visible pill. Smaller than the hit area.",
+    "thumb": "Knob; carries the pending spinner."
+  },
+  "modifiers": {},
+  "defaults": {},
+  "states": {
+    "on": "[aria-checked='true']",
+    "hover": ":hover",
+    "pressed": ":active",
+    "focused": ":focus-visible",
+    "disabled": ":disabled",
+    "pending": "[aria-busy='true']"
+  },
+  "tokens": ["toggle"],
+  "dependsOn": [],
+  "behavior": [
+    "The button element is the hit area (>= control.height.md); the track is what is drawn.",
+    "Pending: the thumb moves to the desired side immediately and shows a spinner until the device confirms.",
+    "On error or timeout the owner reverts aria-checked and reports why (desired vs reported, playbook 6.2)."
+  ],
+  "a11y": { "role": "switch", "notes": "aria-checked reflects the desired state; aria-label names the device." },
+  "lvgl": { "create": "nn_toggle_create", "notes": "lv_switch with LV_STATE_CHECKED; pending is a custom state flag plus spinner." }
+}

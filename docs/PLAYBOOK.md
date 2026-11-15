@@ -199,12 +199,14 @@ tokens/
 ```
 tokens/*.json (repo — primary source)
    │
-   ├── Style Dictionary ──► web:      tokens.css (CSS vars) / Tailwind theme
-   │
-   └── Style Dictionary + custom transform ──► embedded: nn_theme.h
-                                                  (LVGL hex/RGB565 colors, px per mode,
-                                                   font macros, motion constants)
+   └── tools/tokens-build/build.mjs  (zero dependencies; `npm run tokens`)
+         ├──► web:      build/web/tokens.css (--nn-* custom properties per theme x platform), tokens.js
+         ├──► embedded: build/embedded/nn_theme.h + nn_theme_<theme>_<panel>.h
+         │              (LVGL hex/RGB565 colors, px per mode, lv_opa_t, font macros, lv_anim paths)
+         └──► build/audit.md (contrast report; `npm run tokens:check` fails the build on a miss)
 ```
+
+- The build is in-house on purpose (small, no dependencies). Style Dictionary remains an option if more output formats are needed.
 
 - The LVGL transform **must be written in-house** (RGB565, px per mode, fonts, `lv_anim` paths). Nothing off the shelf.
 - Never hand-edit generated files. Change a token → run the pipeline → commit both.
@@ -338,6 +340,12 @@ icons/src/*.svg (source, viewBox 24, SVGO-optimized)
 ## 8. Widget & Module spec
 
 ### 8.1 Template (one `*.spec.md` file per widget/module, next to the code)
+
+**Widgets use a machine-readable spec: `design/specimen/components/<block>.spec.json`.** It is the single description of a
+widget (block, elements, modifiers, defaults, state hooks, token prefixes, behavior, a11y, LVGL notes) and is consumed by
+the design lint (cross-checked against the CSS), and later by the LVGL implementation and the Figma generator.
+Change the spec and the CSS in the same commit; `npm run lint` fails when they disagree.
+The prose template below is still the checklist of what a spec must cover, and is used as-is for modules.
 
 ```md
 ### <Name>  (BEM block: <block-name>)
@@ -513,7 +521,8 @@ icons/
   src/*.svg   build/        ← generated for web + LVGL
 tools/
   tokens-build/build.mjs   ← dependency-free build (DTCG → CSS/JS/LVGL + audit); may move to Style Dictionary later
-  design-lint/             ← automated audit (§15)
+  design-lint/lint.mjs     ← static design lint (§15.1)
+  design-lint/browser-audit.mjs ← geometry audit of every specimen via DS.audit() (§15.1)
 ui-embedded/               ← LVGL
   theme/                   ← generated from tokens, DO NOT hand-edit
   widgets/<name>/          <name>.c  <name>.h  <name>.spec.md
@@ -532,14 +541,20 @@ ui-web/
 
 ### 15.1 Audit rules (design-lint, runs in CI)
 
-- [ ] No raw hex / px in `ui-embedded/widgets|modules|screens` and `ui-web/components`
+`[x]` = enforced automatically. Commands: `npm run check` (token build + contrast + static lint), `npm run test:browser`
+(geometry audit of every specimen in 2 themes x 2 platforms x 2 locales), `npm run verify` (both). CI: `.github/workflows/check.yml`.
+
+- [x] No raw hex / px / ms / em in widget CSS (`lint: raw-value`). LVGL and web-app code are not covered yet.
+- [x] Every `var(--nn-*)` in `design/` exists in the built tokens (`lint: token-ref`)
+- [x] BEM with the `nn-` prefix; no state words in class names (`lint: naming`)
 - [ ] Radius only from the §5 scale; check the concentric radius rule
-- [ ] Touch targets ≥ the mode's threshold
+- [x] Touch targets ≥ the mode's threshold (`test:browser: hit-area`)
 - [x] Text/background color pairs meet AA (automated in `build.mjs`; `npm run tokens:check` exits with an error on failure)
-- [ ] Every widget has a `*.spec.md` + appears in the specimen
+- [x] Every widget has a `<block>.spec.json` that matches its CSS, tokens, factory and specimen (`lint: spec`)
 - [ ] Every device-control module has a statechart
-- [ ] **No overflow**: the visible part of a control stays inside its container's padding box; only the extra touch area (hit-area − visible size) may extend into the padding. The overflow amount is computed from tokens, never hard-coded. *(Learned from the 2026-11-15 bug: toggle overflowed the device-card border.)*
-- [ ] **No line-height bump**: smaller inline text (units, badges) must not increase the height of its line (`line-height: 1`). *(Bug 2026-11-15: value rows misaligned between cards with/without a unit.)*
+- [x] **No overflow**: the visible part of a control stays inside its container's padding box; only the extra touch area (hit-area − visible size) may extend into the padding. The overflow amount is computed from tokens, never hard-coded. *(Learned from the 2026-11-15 bug: toggle overflowed the device-card border.)* (`test:browser: containment`)
+- [x] **No line-height bump**: smaller inline text (units, badges) must not increase the height of its line (`line-height: 1`). *(Bug 2026-11-15: value rows misaligned between cards with/without a unit; the audit then found the same bug in Setpoint.)* (`test:browser: line-box`)
+- [x] Docs and code are English; Vietnamese only in locale catalogs (`lint: english`)
 - [ ] **Screens are layout only**: CSS in `screens/` may only use grid/flex/gap/area sizes via tokens; no colors, borders, radii or custom states.
 - [ ] **All screen states**: every screen has loading / empty / error / offline (+ long-running operation if any)
 - [ ] **Longest localized string** (Vietnamese stress cases: diacritics, longest strings) does not break the layout (truncate with "…" or wrap per spec); numbers/units are formatted per locale, with no hard-coded decimal separators
@@ -964,6 +979,8 @@ General principles when assigning work:
 | 2026-11-15 | Design system name: **NamNam** (prefix `nn`); "Calm Control" kept as the philosophy name | Neutral root name for extension (Tokens/Icons/Widgets/Shell/adapters); "Keel" collides with many other design systems | Nam |
 | 2026-11-15 | Every exported name is prefixed: `--nn-*`, `.nn-*`, `NN_TK_*`, `nn_theme.h`, `NN.*` (§3.3) | Embeddable in other apps/LVGL projects without conflicts; cheapest to add with only 5 widgets | Nam |
 | 2026-11-15 | All documentation in English; UI copy localized (en default, vi at launch) | Repo is international; Vietnamese kept as a localization stress test | Nam |
+| 2026-11-15 | Widget specs are machine-readable (`<block>.spec.json`), checked against CSS by the lint | One description feeds specimen, LVGL and the future Figma generator | Nam |
+| 2026-11-15 | Quality gates automated: `npm run verify` + GitHub Actions (static lint + browser geometry audit) | Rules that are not checked by a machine drift; the audit immediately found a line-box bug in Setpoint | Nam |
 
 ---
 

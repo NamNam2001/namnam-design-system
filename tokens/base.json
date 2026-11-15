@@ -37,6 +37,10 @@
       "regular":  { "$value": 400 },
       "medium":   { "$value": 500 },
       "semibold": { "$value": 600 }
+    },
+    "tracking": {
+      "$type": "number",
+      "caps": { "$value": 0.04, "$description": "Letter spacing for uppercase section headers, in em." }
     }
   },
   "opacity": {
@@ -52,7 +56,8 @@
       "micro":    { "$value": "100ms" },
       "exit":     { "$value": "150ms" },
       "enter":    { "$value": "200ms" },
-      "emphasis": { "$value": "300ms" }
+      "emphasis": { "$value": "300ms" },
+      "spin":     { "$value": "800ms", "$description": "One revolution of a pending/loading spinner (ambient loop, linear)." }
     },
     "easing": {
       "$type": "cubicBezier",

@@ -1,0 +1,9 @@
+/*
+ * Shared by every NamNam widget. Load before any components/<widget>.css.
+ * Holds only global names that more than one widget uses.
+ */
+@keyframes nn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

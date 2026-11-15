@@ -35,6 +35,7 @@
 #define NN_TK_FONT_WEIGHT_REGULAR 400
 #define NN_TK_FONT_WEIGHT_MEDIUM 500
 #define NN_TK_FONT_WEIGHT_SEMIBOLD 600
+#define NN_TK_FONT_TRACKING_CAPS 0.04
 
 /* ---- opacity ---- */
 #define NN_TK_OPACITY_STATE_HOVER 20 /* lv_opa_t, 0.08 */
@@ -45,6 +46,7 @@
 #define NN_TK_MOTION_DURATION_EXIT 150 /* ms */
 #define NN_TK_MOTION_DURATION_ENTER 200 /* ms */
 #define NN_TK_MOTION_DURATION_EMPHASIS 300 /* ms */
+#define NN_TK_MOTION_DURATION_SPIN 800 /* ms */
 #define NN_TK_MOTION_EASING_STANDARD lv_anim_path_ease_out /* web: cubic-bezier(0.2, 0.8, 0.2, 1) */
 #define NN_TK_MOTION_EASING_EXIT lv_anim_path_ease_in /* web: cubic-bezier(0.4, 0, 1, 1) */
 #define NN_TK_MOTION_EASING_LINEAR lv_anim_path_linear /* web: cubic-bezier(0, 0, 1, 1) */
@@ -292,6 +294,7 @@
 #define NN_TK_TOGGLE_HEIGHT 36
 #define NN_TK_TOGGLE_THUMB_SIZE 28
 #define NN_TK_TOGGLE_HIT_AREA 60
+#define NN_TK_TOGGLE_SPINNER_INSET 4
 #define NN_TK_TOGGLE_RADIUS LV_RADIUS_CIRCLE
 #define NN_TK_TOGGLE_DURATION 200 /* ms */
 #define NN_TK_TOGGLE_EASING lv_anim_path_ease_out /* web: cubic-bezier(0.2, 0.8, 0.2, 1) */

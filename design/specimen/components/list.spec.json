@@ -1,0 +1,20 @@
+{
+  "name": "List",
+  "block": "list",
+  "layer": "widget",
+  "purpose": "Group rows on one surface with an optional section header.",
+  "css": "list-item.css",
+  "specimen": "list-item.html",
+  "factory": "list",
+  "elements": {
+    "header": "Uppercase section title."
+  },
+  "modifiers": {},
+  "defaults": {},
+  "states": {},
+  "tokens": ["list"],
+  "dependsOn": ["list-item"],
+  "behavior": ["Clips its rows to the list radius."],
+  "a11y": { "role": "list", "notes": "" },
+  "lvgl": { "create": "nn_list_create", "notes": "Container with column flex layout." }
+}

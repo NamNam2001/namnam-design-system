@@ -1,0 +1,36 @@
+{
+  "name": "Button",
+  "block": "button",
+  "layer": "widget",
+  "purpose": "Primary or secondary action within a content area.",
+  "css": "button.css",
+  "specimen": "button.html",
+  "factory": "button",
+  "elements": {
+    "icon": "Leading Material Symbols glyph (optional).",
+    "label": "Text label. Omitted only with the icon modifier, which then requires aria-label.",
+    "spinner": "Loading indicator; replaces the content without changing the width."
+  },
+  "modifiers": {
+    "variant": ["primary", "secondary", "ghost", "danger"],
+    "size": ["sm", "md", "lg"],
+    "shape": ["icon"]
+  },
+  "defaults": { "variant": "primary", "size": "md" },
+  "states": {
+    "hover": ":hover",
+    "pressed": ":active",
+    "focused": ":focus-visible",
+    "disabled": ":disabled",
+    "loading": "[aria-busy='true']"
+  },
+  "tokens": ["button"],
+  "dependsOn": [],
+  "behavior": [
+    "Visual feedback on touch-down, action on release.",
+    "Loading blocks activation and keeps the measured width.",
+    "Hover exists on web only."
+  ],
+  "a11y": { "role": "button", "notes": "Icon-only buttons must set aria-label. Hit area >= hit-area.min." },
+  "lvgl": { "create": "nn_button_create", "notes": "Variants and sizes as enums; states via LV_STATE_PRESSED / LV_STATE_DISABLED / LV_STATE_FOCUSED." }
+}

@@ -15,10 +15,12 @@ Current state: tokens + build pipeline + web specimens for 5 widgets (Button, To
 
 ```bash
 npm run tokens          # build tokens -> build/ (CSS, JS, LVGL headers) + contrast audit
-npm run tokens:check    # same, exits 1 if the contrast audit fails; run before every commit
+npm run check           # tokens (strict contrast audit) + static design lint
+npm run test:browser    # geometry audit of every specimen: hit areas, containment, line boxes (needs Chrome)
+npm run verify          # check + test:browser; run before every commit
 ```
 
-No dependencies to install (Node >= 18). Specimens: open `design/specimen/index.html` in a browser (works from file://).
+`npm install` once (only dev dependency: playwright-core, drives the installed Chrome; nothing is downloaded). The token build itself has no dependencies (Node >= 18). Specimens: open `design/specimen/index.html` in a browser (works from file://).
 
 ## Map
 
@@ -27,7 +29,9 @@ No dependencies to install (Node >= 18). Specimens: open `design/specimen/index.
 | `tokens/` | Source of truth, W3C DTCG JSON: `primitive.json` → `base.json` + `semantic/<theme>.json` + `modes/<platform>.json` → `component/<widget>.json` | **Yes: the only place values change** |
 | `tools/tokens-build/build.mjs` | Zero-dependency build: resolve aliases, emit CSS/JS/C, run contrast audit. System prefix lives in `SYSTEM` | Yes, carefully |
 | `build/` | GENERATED: `web/tokens.css`, `web/tokens.js`, `embedded/nn_theme*.h`, `audit.md` | **Never by hand**; regenerate and commit with `tokens/` |
-| `design/specimen/components/*.css` | Widget styles (BEM, `nn-` prefix) | Yes |
+| `design/specimen/components/*.css` | Widget styles (BEM, `nn-` prefix); `base.css` holds shared keyframes | Yes |
+| `design/specimen/components/<block>.spec.json` | Machine-readable widget spec: elements, modifiers, state hooks, tokens, behavior. Must match the CSS | Yes, in the same commit as the CSS |
+| `tools/design-lint/` | `lint.mjs` (static rules) and `browser-audit.mjs` (runs `DS.audit()` on every specimen) | Yes, when adding a rule |
 | `design/specimen/components/widgets.js` | Widget factories `NN.*` + simulated device command | Yes |
 | `design/specimen/*.html` | One specimen page per layer/widget | Yes |
 | `docs/PLAYBOOK.md` | Rules, workflows, decision log | Yes: record every decision in §19 |
@@ -45,7 +49,7 @@ No dependencies to install (Node >= 18). Specimens: open `design/specimen/index.
 5. **ISA-101 color rule**: abnormal states change only the status row/icon (dot + color + text), never a whole card. Never convey state by color alone.
 6. **Touch**: hit area ≥ `hit-area.min` / `control.height.md` for the platform; visible parts of a control never overflow their container's padding box (only the hit-area surplus may spill into padding, computed from tokens). Smaller inline text (units, badges) must not grow its line box.
 7. **Embedded-first**: flat surfaces + 1px borders; no blur, glass or large shadows (they don't run on the MCU and the web must match).
-8. **Contrast**: `npm run tokens:check` must pass. New status/indicator colors → add a pair to `AUDIT` in `build.mjs`.
+8. **Contrast and lint**: `npm run verify` must pass. New status/indicator colors → add a pair to `AUDIT` in `build.mjs`.
 9. **Localization**: all docs and code comments are in English. UI copy is localized: English is the default, Vietnamese ships at launch.
    Widget/system strings live in the `MESSAGES` catalog in `widgets.js` (`NN.t('key')`); specimen sample copy uses `DS.L({ en, vi })`.
    Numbers via `NN.num(value, decimals)` (Intl.NumberFormat), never a hard-coded `,` or `.`. Check the longest string and Vietnamese diacritics with the EN/VI switch in the specimen toolbar.
@@ -71,11 +75,9 @@ Templates (brief, RFC, screen spec, feature spec): PLAYBOOK §16.18.
 
 ## Definition of done (self-check before asking for review: PLAYBOOK §16.17)
 
-- [ ] `npm run tokens:check` passes
-- [ ] No hex/px in `design/specimen/components/*.css` or screen CSS
+- [ ] `npm run verify` passes (contrast, raw values, token refs, naming, spec vs CSS, English, hit areas, containment, line boxes)
+- [ ] New or changed widget: `<block>.spec.json` updated together with the CSS
 - [ ] Specimen shows every modifier × state, checked in dark + light and web + embedded-7in
-- [ ] No overflow, hit areas OK, no line-box growth (measure with a script in the browser)
-- [ ] No browser console errors
 - [ ] Every statechart branch can be simulated and renders correctly
 - [ ] Longest label in EN and VI doesn't break layout; numbers follow the locale
 - [ ] Updated: specimen nav (`PAGES` in `design/specimen/specimen.js`) + `index.html`, README widget table, PLAYBOOK §8.4 and §19 decision log

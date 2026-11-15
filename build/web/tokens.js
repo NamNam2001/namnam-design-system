@@ -167,6 +167,13 @@ window.DS_TOKENS = {
         "cssVar": "--nn-font-weight-semibold",
         "c": "NN_TK_FONT_WEIGHT_SEMIBOLD"
       },
+      "font.tracking.caps": {
+        "type": "number",
+        "layer": "semantic",
+        "css": "0.04",
+        "cssVar": "--nn-font-tracking-caps",
+        "c": "NN_TK_FONT_TRACKING_CAPS"
+      },
       "opacity.state.hover": {
         "type": "number",
         "layer": "semantic",
@@ -208,6 +215,13 @@ window.DS_TOKENS = {
         "css": "300ms",
         "cssVar": "--nn-motion-duration-emphasis",
         "c": "NN_TK_MOTION_DURATION_EMPHASIS"
+      },
+      "motion.duration.spin": {
+        "type": "duration",
+        "layer": "semantic",
+        "css": "800ms",
+        "cssVar": "--nn-motion-duration-spin",
+        "c": "NN_TK_MOTION_DURATION_SPIN"
       },
       "motion.easing.standard": {
         "type": "cubicBezier",
@@ -1286,6 +1300,13 @@ window.DS_TOKENS = {
         "css": "40px",
         "cssVar": "--nn-toggle-hit-area",
         "c": "NN_TK_TOGGLE_HIT_AREA"
+      },
+      "toggle.spinner-inset": {
+        "type": "dimension",
+        "layer": "component",
+        "css": "4px",
+        "cssVar": "--nn-toggle-spinner-inset",
+        "c": "NN_TK_TOGGLE_SPINNER_INSET"
       },
       "toggle.radius": {
         "type": "dimension",
@@ -1506,6 +1527,13 @@ window.DS_TOKENS = {
         "cssVar": "--nn-font-weight-semibold",
         "c": "NN_TK_FONT_WEIGHT_SEMIBOLD"
       },
+      "font.tracking.caps": {
+        "type": "number",
+        "layer": "semantic",
+        "css": "0.04",
+        "cssVar": "--nn-font-tracking-caps",
+        "c": "NN_TK_FONT_TRACKING_CAPS"
+      },
       "opacity.state.hover": {
         "type": "number",
         "layer": "semantic",
@@ -1547,6 +1575,13 @@ window.DS_TOKENS = {
         "css": "300ms",
         "cssVar": "--nn-motion-duration-emphasis",
         "c": "NN_TK_MOTION_DURATION_EMPHASIS"
+      },
+      "motion.duration.spin": {
+        "type": "duration",
+        "layer": "semantic",
+        "css": "800ms",
+        "cssVar": "--nn-motion-duration-spin",
+        "c": "NN_TK_MOTION_DURATION_SPIN"
       },
       "motion.easing.standard": {
         "type": "cubicBezier",
@@ -2626,6 +2661,13 @@ window.DS_TOKENS = {
         "cssVar": "--nn-toggle-hit-area",
         "c": "NN_TK_TOGGLE_HIT_AREA"
       },
+      "toggle.spinner-inset": {
+        "type": "dimension",
+        "layer": "component",
+        "css": "4px",
+        "cssVar": "--nn-toggle-spinner-inset",
+        "c": "NN_TK_TOGGLE_SPINNER_INSET"
+      },
       "toggle.radius": {
         "type": "dimension",
         "layer": "component",
@@ -2845,6 +2887,13 @@ window.DS_TOKENS = {
         "cssVar": "--nn-font-weight-semibold",
         "c": "NN_TK_FONT_WEIGHT_SEMIBOLD"
       },
+      "font.tracking.caps": {
+        "type": "number",
+        "layer": "semantic",
+        "css": "0.04",
+        "cssVar": "--nn-font-tracking-caps",
+        "c": "NN_TK_FONT_TRACKING_CAPS"
+      },
       "opacity.state.hover": {
         "type": "number",
         "layer": "semantic",
@@ -2886,6 +2935,13 @@ window.DS_TOKENS = {
         "css": "300ms",
         "cssVar": "--nn-motion-duration-emphasis",
         "c": "NN_TK_MOTION_DURATION_EMPHASIS"
+      },
+      "motion.duration.spin": {
+        "type": "duration",
+        "layer": "semantic",
+        "css": "800ms",
+        "cssVar": "--nn-motion-duration-spin",
+        "c": "NN_TK_MOTION_DURATION_SPIN"
       },
       "motion.easing.standard": {
         "type": "cubicBezier",
@@ -3965,6 +4021,13 @@ window.DS_TOKENS = {
         "cssVar": "--nn-toggle-hit-area",
         "c": "NN_TK_TOGGLE_HIT_AREA"
       },
+      "toggle.spinner-inset": {
+        "type": "dimension",
+        "layer": "component",
+        "css": "4px",
+        "cssVar": "--nn-toggle-spinner-inset",
+        "c": "NN_TK_TOGGLE_SPINNER_INSET"
+      },
       "toggle.radius": {
         "type": "dimension",
         "layer": "component",
@@ -4184,6 +4247,13 @@ window.DS_TOKENS = {
         "cssVar": "--nn-font-weight-semibold",
         "c": "NN_TK_FONT_WEIGHT_SEMIBOLD"
       },
+      "font.tracking.caps": {
+        "type": "number",
+        "layer": "semantic",
+        "css": "0.04",
+        "cssVar": "--nn-font-tracking-caps",
+        "c": "NN_TK_FONT_TRACKING_CAPS"
+      },
       "opacity.state.hover": {
         "type": "number",
         "layer": "semantic",
@@ -4225,6 +4295,13 @@ window.DS_TOKENS = {
         "css": "300ms",
         "cssVar": "--nn-motion-duration-emphasis",
         "c": "NN_TK_MOTION_DURATION_EMPHASIS"
+      },
+      "motion.duration.spin": {
+        "type": "duration",
+        "layer": "semantic",
+        "css": "800ms",
+        "cssVar": "--nn-motion-duration-spin",
+        "c": "NN_TK_MOTION_DURATION_SPIN"
       },
       "motion.easing.standard": {
         "type": "cubicBezier",
@@ -5303,6 +5380,13 @@ window.DS_TOKENS = {
         "css": "60px",
         "cssVar": "--nn-toggle-hit-area",
         "c": "NN_TK_TOGGLE_HIT_AREA"
+      },
+      "toggle.spinner-inset": {
+        "type": "dimension",
+        "layer": "component",
+        "css": "4px",
+        "cssVar": "--nn-toggle-spinner-inset",
+        "c": "NN_TK_TOGGLE_SPINNER_INSET"
       },
       "toggle.radius": {
         "type": "dimension",

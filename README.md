@@ -9,8 +9,11 @@ Design philosophy: **Calm Control** (ISA-101 backbone + Apple HIG refinement).
 ## Quick start
 
 ```bash
+npm install             # once; only dev dependency is playwright-core (uses your installed Chrome)
 npm run tokens          # build tokens + contrast audit
-npm run tokens:check    # same, but exit 1 if the audit fails (for CI)
+npm run check           # strict token build + static design lint
+npm run test:browser    # geometry audit of every specimen (hit areas, containment, line boxes)
+npm run verify          # everything above; CI runs the same (.github/workflows/check.yml)
 ```
 
 Open `design/specimen/index.html` in a browser. Use the toolbar to switch **Dark/Light** and **Web/Embedded 7"**.
@@ -49,6 +52,8 @@ build/                       GENERATED, do not edit
   audit.md                   contrast report
 design/specimen/             one page per layer/widget: every modifier x every state
   components/*.css           widget styles (BEM, nn- prefix), token custom properties only
+  components/<block>.spec.json  machine-readable widget spec, cross-checked against the CSS by the lint
+tools/design-lint/           lint.mjs (static rules) + browser-audit.mjs (DS.audit() on every specimen)
   components/widgets.js      widget factories (NN.*) + simulated device command / statechart
 ```
 

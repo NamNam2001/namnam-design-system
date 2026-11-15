@@ -79,7 +79,7 @@
 .nn-toggle__thumb::after {
   content: '';
   position: absolute;
-  inset: 22%;
+  inset: var(--nn-toggle-spinner-inset);
   border: var(--nn-stroke-focus) solid var(--_track);
   border-right-color: transparent;
   border-radius: var(--nn-toggle-radius);
@@ -92,7 +92,7 @@
 
 .nn-toggle[aria-busy='true'] .nn-toggle__thumb::after {
   opacity: 1;
-  animation: nn-spin 800ms linear infinite;
+  animation: nn-spin var(--nn-motion-duration-spin) linear infinite;
 }
 
 :root[data-platform='web'] .nn-toggle:hover:not(:disabled) .nn-toggle__track::after,
@@ -122,12 +122,6 @@
 
 .nn-toggle:disabled .nn-toggle__track {
   opacity: var(--nn-toggle-disabled-opacity);
-}
-
-@keyframes nn-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

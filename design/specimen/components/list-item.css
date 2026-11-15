@@ -18,7 +18,7 @@
   color: var(--nn-list-header-fg);
   font-size: var(--nn-list-header-size);
   font-weight: var(--nn-font-weight-semibold);
-  letter-spacing: 0.04em;
+  letter-spacing: calc(var(--nn-font-tracking-caps) * 1em);
   text-transform: uppercase;
 }
 

@@ -1,0 +1,31 @@
+{
+  "name": "Slider",
+  "block": "slider",
+  "layer": "widget",
+  "purpose": "Pick a continuous value (brightness, fan speed) with the normal operating range shown as context.",
+  "css": "slider.css",
+  "specimen": "slider.html",
+  "factory": "slider",
+  "elements": {
+    "track": "Full range.",
+    "range": "Thin band under the track marking the normal operating range (ISA-101).",
+    "fill": "Portion from minimum to the current value.",
+    "thumb": "Draggable handle; shows the pressed halo."
+  },
+  "modifiers": {},
+  "defaults": {},
+  "states": {
+    "hover": ":hover",
+    "pressed": "[data-state='pressed']",
+    "focused": ":focus-visible",
+    "disabled": "[aria-disabled='true']"
+  },
+  "tokens": ["slider"],
+  "dependsOn": [],
+  "behavior": [
+    "Drag, tap on the track, or use arrow / PageUp / PageDown / Home / End keys.",
+    "onInput fires while moving; onChange fires on release (send one device command then)."
+  ],
+  "a11y": { "role": "slider", "notes": "aria-valuemin/max/now and aria-valuetext with the unit; aria-label is required." },
+  "lvgl": { "create": "nn_slider_create", "notes": "lv_slider; the normal-range band is an extra drawn part." }
+}

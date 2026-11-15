@@ -107,7 +107,7 @@
   border: var(--nn-stroke-icon) solid currentColor;
   border-right-color: transparent;
   border-radius: var(--nn-radius-pill);
-  animation: nn-spin 800ms linear infinite;
+  animation: nn-spin var(--nn-motion-duration-spin) linear infinite;
 }
 
 /* ---- States ---- */
@@ -157,12 +157,6 @@
   display: block;
 }
 
-@keyframes nn-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .nn-button,
   .nn-button::after {
@@ -170,6 +164,6 @@
   }
 
   .nn-button__spinner {
-    animation-duration: 2s;
+    animation-duration: calc(var(--nn-motion-duration-spin) * 2.5);
   }
 }

@@ -1,0 +1,32 @@
+{
+  "name": "Setpoint",
+  "block": "setpoint",
+  "layer": "widget",
+  "purpose": "Adjust a target value (temperature) in steps, always showing the reported reading and normal range.",
+  "css": "slider.css",
+  "specimen": "slider.html",
+  "factory": "setpoint",
+  "elements": {
+    "label": "What is being set.",
+    "row": "Decrease button, value, increase button.",
+    "value": "Desired value, tabular numerals.",
+    "unit": "Unit suffix; must not grow the value's line box.",
+    "meta": "Context line: reported reading and normal range, or pending / error message."
+  },
+  "modifiers": {},
+  "defaults": {},
+  "states": {
+    "pending": "[aria-busy='true']",
+    "error": "[data-error]",
+    "disabled": "[aria-disabled='true']"
+  },
+  "tokens": ["setpoint"],
+  "dependsOn": ["button"],
+  "behavior": [
+    "- / + change the desired value immediately; one command is committed 600 ms after the last tap.",
+    "Pending dims the value and shows a spinner; error reverts to the last applied value and says why.",
+    "Numbers are formatted per locale (NN.num)."
+  ],
+  "a11y": { "role": "group", "notes": "Step buttons carry localized aria-labels; meta is aria-live=polite." },
+  "lvgl": { "create": "nn_setpoint_create", "notes": "Composite of two nn_button and labels." }
+}

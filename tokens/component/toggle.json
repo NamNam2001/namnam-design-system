@@ -6,6 +6,7 @@
       "height":     { "$value": "{control.switch-height}" },
       "thumb-size": { "$value": "{control.switch-thumb}" },
       "hit-area":   { "$value": "{control.height.md}" },
+      "spinner-inset": { "$value": "{space.2xs}" },
       "radius":     { "$value": "{radius.pill}" },
       "duration":   { "$value": "{motion.duration.enter}" },
       "easing":     { "$value": "{motion.easing.standard}" },

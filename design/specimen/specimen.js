@@ -131,6 +131,59 @@
     onChange: (fn) => listeners.push(fn),
     /** Sample product copy per locale: DS.L({ en: 'Air conditioner', vi: 'Điều hoà' }). Falls back to English. */
     L: (copy) => copy[root.lang] ?? copy.en,
+    /**
+     * Geometry audit of the rendered page (playbook §15.1). Returns a list of failures; empty = pass.
+     * Run it in the console (DS.audit()) or headless via `npm run test:browser`.
+     *   hit-area     interactive widgets are at least hit-area.min in both dimensions
+     *   containment  visible parts of a widget stay inside the widget's box (hit-area wrappers may spill)
+     *   line-box     single-line values are exactly one line tall (smaller inline text must not grow the line)
+     */
+    audit() {
+      const failures = [];
+      const TOLERANCE = 0.5;
+      const minHit = parseFloat(window.DS.token('hit-area.min').css);
+      const shown = (n) => {
+        const r = n.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && !n.closest('[hidden]');
+      };
+      const describe = (n) => {
+        const cls = [...n.classList].find((c) => c.startsWith('nn-')) || n.tagName.toLowerCase();
+        const text = (n.getAttribute('aria-label') || n.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 28);
+        return text ? `${cls} "${text}"` : cls;
+      };
+      const fail = (rule, node, detail) => failures.push({ rule, el: describe(node), detail });
+
+      document.querySelectorAll('.nn-button, .nn-toggle, .nn-slider, .nn-list-item--interactive, .nn-device-card--interactive').forEach((n) => {
+        if (!shown(n)) return;
+        const r = n.getBoundingClientRect();
+        if (r.width < minHit - TOLERANCE || r.height < minHit - TOLERANCE) {
+          fail('hit-area', n, `${Math.round(r.width)}x${Math.round(r.height)} is below ${minHit}px`);
+        }
+      });
+
+      document.querySelectorAll('.nn-device-card, .nn-list, .nn-button, .nn-setpoint, .nn-slider').forEach((box) => {
+        if (!shown(box)) return;
+        const outer = box.getBoundingClientRect();
+        box.querySelectorAll('[class*="nn-"]').forEach((part) => {
+          // .nn-toggle is a transparent hit-area wrapper: its surplus may spill; its track/thumb are checked.
+          if (part.classList.contains('nn-toggle') || !shown(part)) return;
+          const r = part.getBoundingClientRect();
+          const over = Math.max(outer.left - r.left, r.right - outer.right, outer.top - r.top, r.bottom - outer.bottom);
+          if (over > TOLERANCE) fail('containment', part, `overflows ${describe(box)} by ${Math.round(over * 10) / 10}px`);
+        });
+      });
+
+      document.querySelectorAll('.nn-device-card__value, .nn-setpoint__value').forEach((n) => {
+        if (!shown(n)) return;
+        const line = parseFloat(getComputedStyle(n).lineHeight);
+        const height = n.getBoundingClientRect().height;
+        if (Number.isFinite(line) && Math.abs(height - line) > TOLERANCE) {
+          fail('line-box', n, `height ${Math.round(height * 10) / 10}px is not one line (${line}px)`);
+        }
+      });
+
+      return failures;
+    },
     /** Table of resolved tokens whose public name starts with one of the prefixes. */
     tokenTable(...prefixes) {
       const rows = Object.entries(window.DS.tokens()).filter(([name]) => prefixes.some((p) => name.startsWith(`${p}.`)));
