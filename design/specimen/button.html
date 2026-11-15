@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,7 +47,7 @@
   <main class="ds-main">
     <section class="ds-section">
       <h2>Button <span class="ds-mono">· widget · BEM block <code>button</code></span></h2>
-      <p class="ds-lead">Mọi variant × mọi state, đúng kích thước thật của platform đang chọn. Phản hồi khi chạm xuống, hành động khi nhấc tay; loading giữ nguyên chiều rộng; state không nằm trong tên class.</p>
+      <p class="ds-lead">Every variant × every state at the real size of the selected platform. Feedback on touch-down, action on release; loading keeps the width; states are never in class names.</p>
       <div class="ds-panel"><table class="matrix" id="matrix"></table></div>
     </section>
 
@@ -59,19 +59,19 @@
 
     <section class="ds-section">
       <h2>Playground</h2>
-      <p class="ds-lead">Nút thật. Bấm "Áp dụng" để xem loading → xong. Trên web có hover; trên embedded thì không.</p>
+      <p class="ds-lead">Real buttons. Press "Apply" to see loading → done. Web has hover; embedded does not.</p>
       <div class="ds-panel"><div class="playground" id="playground"></div></div>
     </section>
 
     <section class="ds-section" id="frame-section">
       <h2>In context · 7" 1024×600 @1x</h2>
-      <p class="ds-lead">Khung màn thật, tỉ lệ 1:1 pixel. Kéo ngang nếu cửa sổ hẹp hơn 1024px.</p>
+      <p class="ds-lead">Real panel frame at 1:1 pixels. Scroll sideways if the window is narrower than 1024px.</p>
       <div class="frame-wrap"><div class="frame" id="frame"></div></div>
     </section>
 
     <section class="ds-section">
       <h2>Tokens</h2>
-      <p class="ds-lead">Giá trị đã resolve cho theme/platform đang chọn. Cột C là macro trong <code>build/embedded/ui_theme_*.h</code>.</p>
+      <p class="ds-lead">Resolved values for the selected theme/platform. The C column is the macro in <code>build/embedded/nn_theme_*.h</code>.</p>
       <div class="ds-panel"><table class="ds-table" id="tokens"></table></div>
     </section>
   </main>
@@ -80,10 +80,10 @@
   (function () {
     const { el } = DS;
     const VARIANTS = [
-      ['primary', 'Bật', 'power_settings_new'],
-      ['secondary', 'Cài đặt', 'settings'],
-      ['ghost', 'Huỷ', null],
-      ['danger', 'Tắt hệ thống', 'power_settings_new'],
+      ['primary', DS.L({ en: 'Turn on', vi: 'Bật' }), 'power_settings_new'],
+      ['secondary', DS.L({ en: 'Settings', vi: 'Cài đặt' }), 'settings'],
+      ['ghost', DS.L({ en: 'Cancel', vi: 'Huỷ' }), null],
+      ['danger', DS.L({ en: 'Shut down system', vi: 'Tắt hệ thống' }), 'power_settings_new'],
     ];
     const STATES = ['default', 'hover', 'pressed', 'focused', 'disabled', 'loading'];
 
@@ -99,23 +99,23 @@
             const na = state === 'hover' && touch;
             return el('td', { class: na ? 'is-na' : null },
               button({ variant, state, label, icon }),
-              na ? el('span', { class: 'na-label', text: 'không có trên cảm ứng' }) : '');
+              na ? el('span', { class: 'na-label', text: 'n/a on touch' }) : '');
           })))));
     }
 
     function renderSizes() {
       const h = (s) => DS.token(`button.height.${s}`).css;
       document.getElementById('sizes-lead').textContent =
-        `Chiều cao: sm ${h('sm')} · md ${h('md')} · lg ${h('lg')}. Vùng chạm tối thiểu của platform: ${DS.token('hit-area.min').css}.`;
+        `Heights: sm ${h('sm')} · md ${h('md')} · lg ${h('lg')}. Platform minimum hit area: ${DS.token('hit-area.min').css}.`;
       document.getElementById('sizes').replaceChildren(...['sm', 'md', 'lg'].map((size) =>
         el('div', { class: 'sizes__item' },
-          button({ size, label: 'Bật', icon: 'power_settings_new' }),
-          button({ size, variant: 'secondary', label: 'Cài đặt', icon: 'settings' }),
+          button({ size, label: DS.L({ en: 'Turn on', vi: 'Bật' }), icon: 'power_settings_new' }),
+          button({ size, variant: 'secondary', label: DS.L({ en: 'Settings', vi: 'Cài đặt' }), icon: 'settings' }),
           el('span', { class: 'ds-mono', text: `--${size} · ${h(size)}` }))));
     }
 
     function renderPlayground() {
-      const apply = button({ label: 'Áp dụng', icon: 'check' });
+      const apply = button({ label: DS.L({ en: 'Apply', vi: 'Áp dụng' }), icon: 'check' });
       apply.addEventListener('click', () => {
         if (apply.getAttribute('aria-busy') === 'true') return;
         apply.setAttribute('aria-busy', 'true');
@@ -123,10 +123,10 @@
       });
       document.getElementById('playground').replaceChildren(
         apply,
-        button({ variant: 'secondary', label: 'Chế độ quạt', icon: 'mode_fan' }),
-        button({ variant: 'ghost', label: 'Huỷ' }),
-        button({ variant: 'danger', label: 'Dừng khẩn', icon: 'warning' }),
-        button({ state: 'disabled', label: 'Không khả dụng' }));
+        button({ variant: 'secondary', label: DS.L({ en: 'Fan mode', vi: 'Chế độ quạt' }), icon: 'mode_fan' }),
+        button({ variant: 'ghost', label: DS.L({ en: 'Cancel', vi: 'Huỷ' }) }),
+        button({ variant: 'danger', label: DS.L({ en: 'Emergency stop', vi: 'Dừng khẩn' }), icon: 'warning' }),
+        button({ state: 'disabled', label: DS.L({ en: 'Unavailable', vi: 'Không khả dụng' }) }));
     }
 
     function renderFrame() {
@@ -135,16 +135,16 @@
       if (section.hidden) return;
       document.getElementById('frame').replaceChildren(
         el('div', { class: 'frame__bar' },
-          el('span', { text: '09:41 · Phòng họp A' }),
+          el('span', { text: DS.L({ en: '09:41 · Meeting room A', vi: '09:41 · Phòng họp A' }) }),
           el('span', { class: 'material-symbols-rounded', 'aria-hidden': 'true', text: 'wifi' })),
         el('div', { class: 'frame__body' },
           el('div', { class: 'frame__card' },
-            el('p', { class: 'frame__title', text: 'Điều hoà' }),
+            el('p', { class: 'frame__title', text: DS.L({ en: 'Air conditioner', vi: 'Điều hoà' }) }),
             el('div', { class: 'frame__value', text: '24°C' }),
-            el('div', { class: 'frame__hint', text: 'Nhiệt độ phòng 26°C · Quạt tự động' }),
+            el('div', { class: 'frame__hint', text: DS.L({ en: 'Room 26°C · Fan auto', vi: 'Nhiệt độ phòng 26°C · Quạt tự động' }) }),
             el('div', { class: 'frame__actions' },
-              button({ variant: 'secondary', label: 'Chế độ', icon: 'mode_fan' }),
-              button({ label: 'Bật', icon: 'power_settings_new' })))),
+              button({ variant: 'secondary', label: DS.L({ en: 'Mode', vi: 'Chế độ' }), icon: 'mode_fan' }),
+              button({ label: DS.L({ en: 'Turn on', vi: 'Bật' }), icon: 'power_settings_new' })))),
         el('div'));
     }
 

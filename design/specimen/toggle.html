@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,22 +25,22 @@
   <main class="ds-main">
     <section class="ds-section">
       <h2>Toggle <span class="ds-mono">· widget · BEM block <code>toggle</code> · role=switch</span></h2>
-      <p class="ds-lead">Bật/tắt một thiết bị. Vùng chạm là cả nút (≥ control.height.md), track nhìn thấy nhỏ hơn. <strong>Pending</strong>: thumb đã ở vị trí mong muốn, có vòng xoay, chờ thiết bị xác nhận.</p>
+      <p class="ds-lead">Turns one device on or off. The whole button is the hit area (≥ control.height.md); the visible track is smaller. <strong>Pending</strong>: the thumb is already on the desired side with a spinner, waiting for the device to confirm.</p>
       <div class="ds-panel"><table class="ds-matrix" id="matrix"></table></div>
     </section>
 
     <section class="ds-section">
       <h2>Statechart: desired vs reported</h2>
-      <p class="ds-lead">Bấm toggle để gửi lệnh mô phỏng. Chọn kết quả trước khi bấm. Ổ cắm đang mất kết nối nên toggle bị khoá.</p>
+      <p class="ds-lead">Tap a toggle to send a simulated command. Pick the outcome first. The smart plug is offline, so its toggle is locked.</p>
       <div class="ds-panel">
-        <div class="ds-controls"><span>Kết quả mô phỏng:</span><span id="outcome"></span></div>
+        <div class="ds-controls"><span>Simulated outcome:</span><span id="outcome"></span></div>
         <div id="demo" style="max-width: 640px"></div>
         <pre class="ds-statechart">        tap
  off ─────────► pending ──ack──────────► on
   ▲               │
-  │               ├── error ───► off + "Lệnh bị từ chối"
-  └───────────────┴── timeout ─► off + "Không phản hồi"
- * ──offline──► disabled + "Mất kết nối"</pre>
+  │               ├── error ───► off + "Command rejected"
+  └───────────────┴── timeout ─► off + "No response"
+ * ──offline──► disabled + "Offline"</pre>
       </div>
     </section>
 
@@ -66,7 +66,7 @@
             const na = state === 'hover' && touch;
             return el('td', { class: na ? 'is-na' : null },
               NN.toggle({ checked, state, label: `${name} ${state}` }),
-              na ? el('span', { class: 'ds-na', text: 'không có trên cảm ứng' }) : '');
+              na ? el('span', { class: 'ds-na', text: 'n/a on touch' }) : '');
           })))));
     }
 
@@ -74,27 +74,27 @@
       const before = !next;
       t.setAttribute('aria-checked', String(next));
       t.setAttribute('aria-busy', 'true');
-      subtitle.textContent = next ? 'Đang bật…' : 'Đang tắt…';
+      subtitle.textContent = NN.t(next ? 'turningOn' : 'turningOff');
       NN.command(outcome)
         .then(() => { subtitle.textContent = next ? onText : offText; })
         .catch((reason) => {
           t.setAttribute('aria-checked', String(before));
-          subtitle.textContent = reason === 'timeout' ? 'Không phản hồi · đã giữ trạng thái cũ' : 'Lệnh bị từ chối · đã giữ trạng thái cũ';
+          subtitle.textContent = NN.t(reason === 'timeout' ? 'stateNoResponse' : 'stateRejected');
         })
         .finally(() => t.removeAttribute('aria-busy'));
     }
 
     function renderDemo() {
       const devices = [
-        ['lightbulb', 'Đèn trần', 'Đang bật', 'Đã tắt', true],
-        ['mode_fan', 'Quạt hút', 'Đang chạy', 'Đã tắt', false],
-        ['ac_unit', 'Điều hoà', 'Đang làm mát', 'Đã tắt', true],
-        ['power', 'Ổ cắm thông minh', 'Có điện', 'Ngắt điện', false, true],
+        ['lightbulb', DS.L({ en: 'Ceiling light', vi: 'Đèn trần' }), DS.L({ en: 'On', vi: 'Đang bật' }), DS.L({ en: 'Off', vi: 'Đã tắt' }), true],
+        ['mode_fan', DS.L({ en: 'Exhaust fan', vi: 'Quạt hút' }), DS.L({ en: 'Running', vi: 'Đang chạy' }), DS.L({ en: 'Off', vi: 'Đã tắt' }), false],
+        ['ac_unit', DS.L({ en: 'Air conditioner', vi: 'Điều hoà' }), DS.L({ en: 'Cooling', vi: 'Đang làm mát' }), DS.L({ en: 'Off', vi: 'Đã tắt' }), true],
+        ['power', DS.L({ en: 'Smart plug', vi: 'Ổ cắm thông minh' }), DS.L({ en: 'Powered', vi: 'Có điện' }), DS.L({ en: 'Power cut', vi: 'Ngắt điện' }), false, true],
       ];
       const items = devices.map(([glyph, title, onText, offText, checked, offline]) => NN.listItem({
         icon: glyph,
         title,
-        subtitle: offline ? 'Mất kết nối · 5 phút trước' : checked ? onText : offText,
+        subtitle: offline ? DS.L({ en: 'Offline · 5 min ago', vi: 'Mất kết nối · 5 phút trước' }) : checked ? onText : offText,
         trailing: NN.toggle({
           checked,
           label: title,
@@ -102,11 +102,11 @@
           onToggle: (next, t) => run(next, t, t.closest('.nn-list-item').querySelector('.nn-list-item__subtitle'), onText, offText),
         }),
       }));
-      document.getElementById('demo').replaceChildren(NN.list({ header: 'Phòng họp A', items }));
+      document.getElementById('demo').replaceChildren(NN.list({ header: DS.L({ en: 'Meeting room A', vi: 'Phòng họp A' }), items }));
     }
 
     document.getElementById('outcome').replaceWith(NN.choice('outcome',
-      [['ack', 'Thành công'], ['error', 'Lỗi'], ['timeout', 'Hết thời gian']], outcome, (v) => { outcome = v; }));
+      [['ack', 'Success'], ['error', 'Error'], ['timeout', 'Timeout']], outcome, (v) => { outcome = v; }));
 
     function render() {
       renderMatrix();

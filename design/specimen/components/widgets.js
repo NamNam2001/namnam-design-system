@@ -11,6 +11,63 @@
   const icon = (name, cls) => el('span', { class: `${cls} material-symbols-rounded`, 'aria-hidden': 'true', text: name });
   const FORCED = ['hover', 'pressed', 'focused'];
 
+  // ------------------------------------------------------------- Localization
+  // System strings owned by widgets/modules. Product copy (device names...) comes from the caller.
+  // Locale = <html lang>; English is the default and the fallback for missing keys.
+  const MESSAGES = {
+    en: {
+      decrease: 'Decrease {label}',
+      increase: 'Increase {label}',
+      current: 'Now {value}',
+      normalRange: 'normal {min}–{max}',
+      sending: 'Sending to device…',
+      valueNoResponse: 'Device not responding · kept previous value',
+      valueRejected: 'Command rejected · kept previous value',
+      offlineAdjust: 'Offline · cannot adjust',
+      turningOn: 'Turning on…',
+      turningOff: 'Turning off…',
+      running: 'Running',
+      off: 'Off',
+      stateNoResponse: 'Device not responding · kept previous state',
+      stateRejected: 'Command rejected · kept previous state',
+      'status.ok': 'Normal',
+      'status.warning': 'Warning',
+      'status.critical': 'Fault',
+      'status.info': 'Info',
+      'status.offline': 'Offline',
+    },
+    vi: {
+      decrease: 'Giảm {label}',
+      increase: 'Tăng {label}',
+      current: 'Hiện tại {value}',
+      normalRange: 'bình thường {min}–{max}',
+      sending: 'Đang gửi tới thiết bị…',
+      valueNoResponse: 'Thiết bị không phản hồi · đã giữ giá trị cũ',
+      valueRejected: 'Lệnh bị từ chối · đã giữ giá trị cũ',
+      offlineAdjust: 'Mất kết nối · không thể điều chỉnh',
+      turningOn: 'Đang bật…',
+      turningOff: 'Đang tắt…',
+      running: 'Đang chạy',
+      off: 'Đã tắt',
+      stateNoResponse: 'Thiết bị không phản hồi · đã giữ trạng thái cũ',
+      stateRejected: 'Lệnh bị từ chối · đã giữ trạng thái cũ',
+      'status.ok': 'Hoạt động bình thường',
+      'status.warning': 'Cảnh báo',
+      'status.critical': 'Lỗi',
+      'status.info': 'Thông tin',
+      'status.offline': 'Mất kết nối',
+    },
+  };
+  const locale = () => document.documentElement.lang || 'en';
+  function t(key, vars = {}) {
+    const table = MESSAGES[locale().slice(0, 2)] || MESSAGES.en;
+    const text = table[key] ?? MESSAGES.en[key] ?? key;
+    return text.replace(/\{(\w+)\}/g, (_, name) => (vars[name] ?? ''));
+  }
+  /** Locale-aware number (decimal separator, grouping). Never hard-code "," or ".". */
+  const num = (value, decimals = 0) =>
+    new Intl.NumberFormat(locale(), { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+
   // ------------------------------------------------------------- Button
   function button({ variant = 'primary', size = 'md', state = 'default', label, icon: glyph, ariaLabel, onClick } = {}) {
     const classes = ['nn-button', `nn-button--${variant}`];
@@ -135,16 +192,18 @@
     const valueEl = el('p', { class: 'nn-setpoint__value' });
     const meta = el('p', { class: 'nn-setpoint__meta', 'aria-live': 'polite' });
     const disabled = state === 'disabled';
-    const dec = button({ variant: 'secondary', size: 'lg', icon: 'remove', ariaLabel: `Giảm ${label}`, state: disabled ? 'disabled' : 'default' });
-    const inc = button({ variant: 'secondary', size: 'lg', icon: 'add', ariaLabel: `Tăng ${label}`, state: disabled ? 'disabled' : 'default' });
+    const dec = button({ variant: 'secondary', size: 'lg', icon: 'remove', ariaLabel: t('decrease', { label }), state: disabled ? 'disabled' : 'default' });
+    const inc = button({ variant: 'secondary', size: 'lg', icon: 'add', ariaLabel: t('increase', { label }), state: disabled ? 'disabled' : 'default' });
     const root = el('div', { class: 'nn-setpoint', role: 'group', 'aria-label': label, 'aria-disabled': disabled ? 'true' : null },
       el('p', { class: 'nn-setpoint__label', text: label }),
       el('div', { class: 'nn-setpoint__row' }, dec, valueEl, inc),
       meta);
 
-    const fmt = (v) => Number(v).toFixed(decimals).replace('.', ',');
-    const context = () => [current !== undefined && `Hiện tại ${fmt(current)}${unit}`, normal && `bình thường ${fmt(normal[0])}–${fmt(normal[1])}${unit}`]
-      .filter(Boolean).join(' · ');
+    const fmt = (v) => num(v, decimals);
+    const context = () => [
+      current !== undefined && t('current', { value: `${fmt(current)}${unit}` }),
+      normal && t('normalRange', { min: fmt(normal[0]), max: `${fmt(normal[1])}${unit}` }),
+    ].filter(Boolean).join(' · ');
 
     function render() {
       valueEl.replaceChildren(fmt(desired), el('span', { class: 'nn-setpoint__unit', text: unit }));
@@ -173,9 +232,9 @@
     inc.addEventListener('click', () => nudge(step));
 
     render();
-    if (state === 'pending') { root.setPending(true); root.setMeta('Đang gửi tới thiết bị…'); }
-    else if (state === 'error') root.setError('Thiết bị không phản hồi · đã giữ giá trị cũ');
-    else if (disabled) root.setMeta('Mất kết nối · không thể điều chỉnh');
+    if (state === 'pending') { root.setPending(true); root.setMeta(t('sending')); }
+    else if (state === 'error') root.setError(t('valueNoResponse'));
+    else if (disabled) root.setMeta(t('offlineAdjust'));
     else root.setMeta(context());
     return root;
   }
@@ -210,14 +269,6 @@
   }
 
   // ------------------------------------------------------------- DeviceCard
-  const STATUS_TEXT = {
-    ok: 'Hoạt động bình thường',
-    warning: 'Cảnh báo',
-    critical: 'Lỗi',
-    info: 'Thông tin',
-    offline: 'Mất kết nối',
-  };
-
   function deviceCard({ icon: glyph, title, value, unit, status = 'ok', statusText, active = false, control = 'toggle', compact = false, pending = false, state = 'default', onToggle, onClick } = {}) {
     const interactive = control === 'chevron';
     const classes = ['nn-device-card'];
@@ -257,7 +308,7 @@
       }
       if (tgl && 'status' in props) tgl.disabled = props.status === 'offline';
       if ('value' in props) valueEl.replaceChildren(props.value ?? '—', props.unit ?? unit ? el('span', { class: 'nn-device-card__unit', text: props.unit ?? unit }) : '');
-      if ('statusText' in props || 'status' in props) statusEl.textContent = props.statusText || STATUS_TEXT[root.dataset.status] || '';
+      if ('statusText' in props || 'status' in props) statusEl.textContent = props.statusText || t(`status.${root.dataset.status}`);
     };
     root.update({ status, active, pending, value, unit, statusText });
     root.toggleEl = tgl;
@@ -283,16 +334,16 @@
   function bindOnOff(card, { getOutcome, onActive }) {
     return (next) => {
       const before = card.dataset.active === 'true';
-      card.update({ active: next, pending: true, statusText: next ? 'Đang bật…' : 'Đang tắt…' });
+      card.update({ active: next, pending: true, statusText: t(next ? 'turningOn' : 'turningOff') });
       command(getOutcome())
         .then(() => {
-          card.update({ pending: false, statusText: next ? 'Đang chạy' : 'Đã tắt' });
+          card.update({ pending: false, statusText: t(next ? 'running' : 'off') });
           if (onActive) onActive(next);
         })
         .catch((reason) => card.update({
           active: before,
           pending: false,
-          statusText: reason === 'timeout' ? 'Thiết bị không phản hồi · đã giữ trạng thái cũ' : 'Lệnh bị từ chối · đã giữ trạng thái cũ',
+          statusText: t(reason === 'timeout' ? 'stateNoResponse' : 'stateRejected'),
         }));
     };
   }
@@ -310,5 +361,5 @@
     return group;
   }
 
-  window.NN = { button, toggle, slider, setpoint, list, listItem, deviceCard, command, bindOnOff, choice, icon };
+  window.NN = { button, toggle, slider, setpoint, list, listItem, deviceCard, command, bindOnOff, choice, icon, t, num, locale, MESSAGES };
 })();

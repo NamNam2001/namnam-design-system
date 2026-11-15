@@ -29,6 +29,9 @@
 
   root.dataset.theme = pick('theme', data.themes, data.defaults.theme);
   root.dataset.platform = pick('platform', data.platforms, data.defaults.platform);
+  // UI copy locale: English by default; Vietnamese is the launch locale and the diacritics stress test.
+  const LOCALES = ['en', 'vi'];
+  root.lang = pick('locale', LOCALES, 'en');
 
   const listeners = [];
   const PLATFORM_LABELS = { web: 'Web', 'embedded-7in': 'Embedded 7"' };
@@ -62,9 +65,31 @@
   function renderToolbar() {
     const host = document.getElementById('ds-toolbar');
     if (!host) return;
+    // Locale switch reloads: widget/system strings and number formats are resolved at render time.
+    const localeGroup = document.createElement('div');
+    localeGroup.className = 'ds-seg';
+    localeGroup.setAttribute('role', 'radiogroup');
+    localeGroup.setAttribute('aria-label', 'locale');
+    LOCALES.forEach((value) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ds-seg__item';
+      btn.textContent = value.toUpperCase();
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('aria-checked', String(root.lang === value));
+      btn.addEventListener('click', () => {
+        if (root.lang === value) return;
+        store.set('ds.locale', value);
+        const url = new URL(location.href);
+        url.searchParams.delete('locale');
+        location.href = url.toString();
+      });
+      localeGroup.appendChild(btn);
+    });
     host.replaceChildren(
       segmented('theme', data.themes, THEME_LABELS),
       segmented('platform', data.platforms, PLATFORM_LABELS),
+      localeGroup,
     );
   }
 
@@ -104,6 +129,8 @@
       return t;
     },
     onChange: (fn) => listeners.push(fn),
+    /** Sample product copy per locale: DS.L({ en: 'Air conditioner', vi: 'Điều hoà' }). Falls back to English. */
+    L: (copy) => copy[root.lang] ?? copy.en,
     /** Table of resolved tokens whose public name starts with one of the prefixes. */
     tokenTable(...prefixes) {
       const rows = Object.entries(window.DS.tokens()).filter(([name]) => prefixes.some((p) => name.startsWith(`${p}.`)));

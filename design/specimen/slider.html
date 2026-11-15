@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,7 +39,7 @@
   <main class="ds-main">
     <section class="ds-section">
       <h2>Slider <span class="ds-mono">· widget · BEM block <code>slider</code> · role=slider</span></h2>
-      <p class="ds-lead">Giá trị liên tục (độ sáng, tốc độ quạt). Vạch mảnh dưới track là <strong>vùng bình thường</strong> (ISA-101: giá trị luôn kèm ngữ cảnh). Kéo, chạm, hoặc dùng phím mũi tên.</p>
+      <p class="ds-lead">Continuous values (brightness, fan speed). The thin line under the track is the <strong>normal range</strong> (ISA-101: values always come with context). Drag, tap or use the arrow keys.</p>
       <div class="ds-panel"><table class="ds-matrix slider-matrix" id="matrix"></table></div>
     </section>
 
@@ -50,14 +50,14 @@
 
     <section class="ds-section">
       <h2>Setpoint <span class="ds-mono">· widget · BEM block <code>setpoint</code></span></h2>
-      <p class="ds-lead">Giá trị đặt (nhiệt độ). Nút −/+ đổi giá trị mong muốn ngay; ngừng bấm 0,6s thì gửi một lệnh. Dòng dưới luôn cho biết <strong>giá trị thật hiện tại</strong> và vùng bình thường.</p>
+      <p class="ds-lead">Target value (temperature). −/+ change the desired value immediately; one command is sent 0.6 s after the last tap. The line below always shows the <strong>actual current reading</strong> and the normal range.</p>
       <div class="ds-panel"><div class="gallery" id="setpoint-states"></div></div>
     </section>
 
     <section class="ds-section">
       <h2>Setpoint · statechart</h2>
       <div class="ds-panel">
-        <div class="ds-controls"><span>Kết quả mô phỏng:</span><span id="outcome"></span></div>
+        <div class="ds-controls"><span>Simulated outcome:</span><span id="outcome"></span></div>
         <div style="max-width: 420px" class="surface" id="setpoint-live"></div>
       </div>
     </section>
@@ -97,20 +97,20 @@
             const props = { value: 62, normal: [40, 80], state, label: state, unit: '%' };
             // hover cannot be forced on a slider via attribute; show default look with a note
             return el('td', { class: na ? 'is-na' : null }, NN.slider(props),
-              na ? el('span', { class: 'ds-na', text: 'không có trên cảm ứng' }) : state === 'hover' ? el('span', { class: 'ds-na', text: 'rê chuột để xem' }) : '');
+              na ? el('span', { class: 'ds-na', text: 'n/a on touch' }) : state === 'hover' ? el('span', { class: 'ds-na', text: 'hover to see' }) : '');
           }))));
     }
 
     function renderSliders() {
       document.getElementById('sliders').replaceChildren(
-        el('div', { class: 'tile' }, field('Độ sáng', { min: 0, max: 100, value: 70, unit: '%' }, (v) => `${v}%`)),
-        el('div', { class: 'tile' }, field('Tốc độ quạt', { min: 1, max: 5, step: 1, value: 3, normal: [2, 4] }, (v) => `Mức ${v}`)),
-        el('div', { class: 'tile' }, field('Độ ẩm mục tiêu', { min: 30, max: 80, step: 5, value: 55, normal: [40, 60], unit: '%' }, (v) => `${v}%`)),
+        el('div', { class: 'tile' }, field(DS.L({ en: 'Brightness', vi: 'Độ sáng' }), { min: 0, max: 100, value: 70, unit: '%' }, (v) => `${v}%`)),
+        el('div', { class: 'tile' }, field(DS.L({ en: 'Fan speed', vi: 'Tốc độ quạt' }), { min: 1, max: 5, step: 1, value: 3, normal: [2, 4] }, (v) => `${DS.L({ en: 'Level', vi: 'Mức' })} ${v}`)),
+        el('div', { class: 'tile' }, field(DS.L({ en: 'Target humidity', vi: 'Độ ẩm mục tiêu' }), { min: 30, max: 80, step: 5, value: 55, normal: [40, 60], unit: '%' }, (v) => `${v}%`)),
       );
     }
 
     function renderSetpointStates() {
-      const base = { label: 'Nhiệt độ cài đặt', value: 24, min: 16, max: 30, unit: '°C', current: 26, normal: [22, 26] };
+      const base = { label: DS.L({ en: 'Setpoint', vi: 'Nhiệt độ cài đặt' }), value: 24, min: 16, max: 30, unit: '°C', current: 26, normal: [22, 26] };
       document.getElementById('setpoint-states').replaceChildren(...[
         ['default', 'default'], ['pending', 'pending'], ['error', 'error'], ['disabled', 'offline'],
       ].map(([state, caption]) => el('div', { class: 'tile' },
@@ -122,11 +122,11 @@
       let reported = 26;
       let drift = null;
       const sp = NN.setpoint({
-        label: 'Nhiệt độ cài đặt', value: 24, min: 16, max: 30, unit: '°C', current: reported, normal: [22, 26],
+        label: DS.L({ en: 'Setpoint', vi: 'Nhiệt độ cài đặt' }), value: 24, min: 16, max: 30, unit: '°C', current: reported, normal: [22, 26],
         onCommit: (desired, root) => {
           const previous = root.dataset.applied ? Number(root.dataset.applied) : 24;
           root.setPending(true);
-          root.setMeta('Đang gửi tới thiết bị…');
+          root.setMeta(NN.t('sending'));
           NN.command(outcome)
             .then(() => {
               root.dataset.applied = desired;
@@ -143,7 +143,7 @@
             .catch((reason) => {
               root.setPending(false);
               root.setValue(previous);
-              root.setError(reason === 'timeout' ? 'Thiết bị không phản hồi · đã giữ giá trị cũ' : 'Lệnh bị từ chối · đã giữ giá trị cũ');
+              root.setError(NN.t(reason === 'timeout' ? 'valueNoResponse' : 'valueRejected'));
             });
         },
       });
@@ -154,24 +154,24 @@
       const section = document.getElementById('frame-section');
       section.hidden = DS.platform() !== 'embedded-7in';
       if (section.hidden) return;
-      const sp = NN.setpoint({ label: 'Nhiệt độ cài đặt', value: 24, min: 16, max: 30, unit: '°C', current: 26, normal: [22, 26] });
+      const sp = NN.setpoint({ label: DS.L({ en: 'Setpoint', vi: 'Nhiệt độ cài đặt' }), value: 24, min: 16, max: 30, unit: '°C', current: 26, normal: [22, 26] });
       document.getElementById('frame').replaceChildren(
         el('div', { class: 'ds-frame__bar' },
-          el('span', { text: '09:41 · Phòng họp A · Điều hoà' }),
+          el('span', { text: DS.L({ en: '09:41 · Meeting room A · Air conditioner', vi: '09:41 · Phòng họp A · Điều hoà' }) }),
           el('span', { class: 'material-symbols-rounded', 'aria-hidden': 'true', text: 'wifi' })),
         el('div', { class: 'ds-frame__body' },
           el('div', { class: 'thermo' },
             el('div', { class: 'surface', style: 'display:grid; align-content:center' }, sp),
             el('div', { class: 'thermo__side' },
-              el('div', { class: 'surface' }, field('Tốc độ quạt', { min: 1, max: 5, step: 1, value: 3, normal: [2, 4] }, (v) => `Mức ${v}`)),
+              el('div', { class: 'surface' }, field(DS.L({ en: 'Fan speed', vi: 'Tốc độ quạt' }), { min: 1, max: 5, step: 1, value: 3, normal: [2, 4] }, (v) => `${DS.L({ en: 'Level', vi: 'Mức' })} ${v}`)),
               NN.list({ items: [
-                NN.listItem({ icon: 'ac_unit', title: 'Chế độ', trailing: 'Làm mát', interactive: true }),
-                NN.listItem({ icon: 'schedule', title: 'Hẹn giờ tắt', trailing: '18:00', interactive: true }),
+                NN.listItem({ icon: 'ac_unit', title: DS.L({ en: 'Mode', vi: 'Chế độ' }), trailing: DS.L({ en: 'Cooling', vi: 'Làm mát' }), interactive: true }),
+                NN.listItem({ icon: 'schedule', title: DS.L({ en: 'Off timer', vi: 'Hẹn giờ tắt' }), trailing: '18:00', interactive: true }),
               ] })))));
     }
 
     document.getElementById('outcome').replaceWith(NN.choice('outcome',
-      [['ack', 'Thành công'], ['error', 'Lỗi'], ['timeout', 'Hết thời gian']], outcome, (v) => { outcome = v; }));
+      [['ack', 'Success'], ['error', 'Error'], ['timeout', 'Timeout']], outcome, (v) => { outcome = v; }));
 
     function render() {
       renderMatrix();

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,7 +29,7 @@
   <main class="ds-main">
     <section class="ds-section">
       <h2>List item <span class="ds-mono">· widget · BEM blocks <code>list</code>, <code>list-item</code></span></h2>
-      <p class="ds-lead">Một hàng = <strong>một</strong> mục tiêu chạm. Hàng <code>--interactive</code> là cả nút (có chevron). Hàng có toggle thì hàng không bấm được, chỉ toggle bấm được. Hàng chỉ đọc không có phản hồi chạm.</p>
+      <p class="ds-lead">One row = <strong>one</strong> tap target. An <code>--interactive</code> row is a single button (with a chevron). A row with a toggle is not tappable; only the toggle is. Read-only rows give no touch feedback.</p>
       <div class="ds-panel" style="max-width: 640px" id="states"></div>
     </section>
 
@@ -40,7 +40,7 @@
 
     <section class="ds-section">
       <h2>Edge cases</h2>
-      <p class="ds-lead">Chữ dài cắt bằng dấu "…", giá trị bên phải không bao giờ bị đẩy mất.</p>
+      <p class="ds-lead">Long text truncates with "…"; the trailing value is never pushed out. Switch to VI for the Vietnamese stress case.</p>
       <div class="ds-panel" style="max-width: 520px" id="edge"></div>
     </section>
 
@@ -63,9 +63,9 @@
           const na = state === 'hover' && touch;
           const item = NN.listItem({
             icon: 'ac_unit',
-            title: 'Chế độ vận hành',
-            subtitle: na ? 'hover · không có trên cảm ứng' : state,
-            trailing: 'Tự động',
+            title: DS.L({ en: 'Operating mode', vi: 'Chế độ vận hành' }),
+            subtitle: na ? 'hover · n/a on touch' : state,
+            trailing: DS.L({ en: 'Auto', vi: 'Tự động' }),
             interactive: true,
             disabled: state === 'disabled',
             state,
@@ -77,24 +77,24 @@
     }
 
     function renderPatterns() {
-      const settings = NN.list({ header: 'Cài đặt', items: [
-        NN.listItem({ icon: 'wifi', title: 'Wi-Fi', subtitle: 'Office-5G', trailing: 'Đã kết nối', interactive: true }),
-        NN.listItem({ icon: 'brightness_6', title: 'Độ sáng màn hình', trailing: '70%', interactive: true }),
-        NN.listItem({ icon: 'language', title: 'Ngôn ngữ', trailing: 'Tiếng Việt', interactive: true }),
-        NN.listItem({ icon: 'system_update', title: 'Cập nhật phần mềm', subtitle: 'Không thể kiểm tra khi mất mạng', interactive: true, disabled: true }),
+      const settings = NN.list({ header: DS.L({ en: 'Settings', vi: 'Cài đặt' }), items: [
+        NN.listItem({ icon: 'wifi', title: 'Wi-Fi', subtitle: 'Office-5G', trailing: DS.L({ en: 'Connected', vi: 'Đã kết nối' }), interactive: true }),
+        NN.listItem({ icon: 'brightness_6', title: DS.L({ en: 'Screen brightness', vi: 'Độ sáng màn hình' }), trailing: '70%', interactive: true }),
+        NN.listItem({ icon: 'language', title: DS.L({ en: 'Language', vi: 'Ngôn ngữ' }), trailing: DS.L({ en: 'English', vi: 'Tiếng Việt' }), interactive: true }),
+        NN.listItem({ icon: 'system_update', title: DS.L({ en: 'Software update', vi: 'Cập nhật phần mềm' }), subtitle: DS.L({ en: 'Cannot check while offline', vi: 'Không thể kiểm tra khi mất mạng' }), interactive: true, disabled: true }),
       ] });
 
-      const devices = NN.list({ header: 'Thiết bị · Phòng họp A', items: [
-        NN.listItem({ icon: 'lightbulb', title: 'Đèn trần', subtitle: 'Đang bật', trailing: NN.toggle({ checked: true, label: 'Đèn trần' }) }),
-        NN.listItem({ icon: 'mode_fan', title: 'Quạt hút', subtitle: 'Đã tắt', trailing: NN.toggle({ checked: false, label: 'Quạt hút' }) }),
-        NN.listItem({ icon: 'power', title: 'Ổ cắm thông minh', subtitle: 'Mất kết nối · 5 phút trước', trailing: NN.toggle({ checked: false, label: 'Ổ cắm', state: 'disabled' }) }),
+      const devices = NN.list({ header: DS.L({ en: 'Devices · Meeting room A', vi: 'Thiết bị · Phòng họp A' }), items: [
+        NN.listItem({ icon: 'lightbulb', title: DS.L({ en: 'Ceiling light', vi: 'Đèn trần' }), subtitle: DS.L({ en: 'On', vi: 'Đang bật' }), trailing: NN.toggle({ checked: true, label: DS.L({ en: 'Ceiling light', vi: 'Đèn trần' }) }) }),
+        NN.listItem({ icon: 'mode_fan', title: DS.L({ en: 'Exhaust fan', vi: 'Quạt hút' }), subtitle: DS.L({ en: 'Off', vi: 'Đã tắt' }), trailing: NN.toggle({ checked: false, label: DS.L({ en: 'Exhaust fan', vi: 'Quạt hút' }) }) }),
+        NN.listItem({ icon: 'power', title: DS.L({ en: 'Smart plug', vi: 'Ổ cắm thông minh' }), subtitle: DS.L({ en: 'Offline · 5 min ago', vi: 'Mất kết nối · 5 phút trước' }), trailing: NN.toggle({ checked: false, label: DS.L({ en: 'Smart plug', vi: 'Ổ cắm' }), state: 'disabled' }) }),
       ] });
 
-      const info = NN.list({ header: 'Thông tin thiết bị', items: [
+      const info = NN.list({ header: DS.L({ en: 'Device info', vi: 'Thông tin thiết bị' }), items: [
         NN.listItem({ icon: 'memory', title: 'Firmware', trailing: '1.4.2' }),
-        NN.listItem({ icon: 'lan', title: 'Địa chỉ IP', trailing: '192.168.1.42' }),
-        NN.listItem({ icon: 'network_wifi_3_bar', title: 'Tín hiệu Wi-Fi', trailing: el('span', { class: 'signal' }, '−58 dBm') }),
-        NN.listItem({ icon: 'schedule', title: 'Thời gian hoạt động', trailing: '12 ngày 4 giờ' }),
+        NN.listItem({ icon: 'lan', title: DS.L({ en: 'IP address', vi: 'Địa chỉ IP' }), trailing: '192.168.1.42' }),
+        NN.listItem({ icon: 'network_wifi_3_bar', title: DS.L({ en: 'Wi-Fi signal', vi: 'Tín hiệu Wi-Fi' }), trailing: el('span', { class: 'signal' }, '−58 dBm') }),
+        NN.listItem({ icon: 'schedule', title: DS.L({ en: 'Uptime', vi: 'Thời gian hoạt động' }), trailing: DS.L({ en: '12 days 4 h', vi: '12 ngày 4 giờ' }) }),
       ] });
 
       document.getElementById('patterns').replaceChildren(settings, devices, info);
@@ -102,8 +102,8 @@
 
     function renderEdge() {
       document.getElementById('edge').replaceChildren(NN.list({ items: [
-        NN.listItem({ icon: 'ac_unit', title: 'Điều hoà phòng họp lớn tầng 3 khu B (phía cửa sổ)', subtitle: 'Đang làm mát · quạt tự động · lịch làm việc giờ hành chính', trailing: '24,5°C', interactive: true }),
-        NN.listItem({ icon: 'thermostat', title: 'Cảm biến', subtitle: '', trailing: '—' }),
+        NN.listItem({ icon: 'ac_unit', title: DS.L({ en: 'Large meeting room AC, floor 3, zone B (window side)', vi: 'Điều hoà phòng họp lớn tầng 3 khu B (phía cửa sổ)' }), subtitle: DS.L({ en: 'Cooling · fan auto · office-hours schedule', vi: 'Đang làm mát · quạt tự động · lịch làm việc giờ hành chính' }), trailing: `${NN.num(24.5, 1)}°C`, interactive: true }),
+        NN.listItem({ icon: 'thermostat', title: DS.L({ en: 'Sensor', vi: 'Cảm biến' }), subtitle: '', trailing: '—' }),
       ] }));
     }
 

@@ -1,7 +1,7 @@
 # AGENTS.md: NamNam Design System
 
 Instructions for any AI coding agent working in this repo. Read this file fully before doing anything.
-The full rulebook is [`docs/PLAYBOOK.md`](docs/PLAYBOOK.md) (Vietnamese). Read the sections this file points to; don't load all of it by default.
+The full rulebook is [`docs/PLAYBOOK.md`](docs/PLAYBOOK.md). Read the sections this file points to; don't load all of it by default.
 
 ## What this repo is
 
@@ -46,7 +46,9 @@ No dependencies to install (Node >= 18). Specimens: open `design/specimen/index.
 6. **Touch**: hit area ≥ `hit-area.min` / `control.height.md` for the platform; visible parts of a control never overflow their container's padding box (only the hit-area surplus may spill into padding, computed from tokens). Smaller inline text (units, badges) must not grow its line box.
 7. **Embedded-first**: flat surfaces + 1px borders; no blur, glass or large shadows (they don't run on the MCU and the web must match).
 8. **Contrast**: `npm run tokens:check` must pass. New status/indicator colors → add a pair to `AUDIT` in `build.mjs`.
-9. **Vietnamese UI text**, decimal comma (`24,5°C`). Test the longest label.
+9. **Localization**: all docs and code comments are in English. UI copy is localized: English is the default, Vietnamese ships at launch.
+   Widget/system strings live in the `MESSAGES` catalog in `widgets.js` (`NN.t('key')`); specimen sample copy uses `DS.L({ en, vi })`.
+   Numbers via `NN.num(value, decimals)` (Intl.NumberFormat), never a hard-coded `,` or `.`. Check the longest string and Vietnamese diacritics with the EN/VI switch in the specimen toolbar.
 
 ## How to handle a request
 
@@ -75,7 +77,7 @@ Templates (brief, RFC, screen spec, feature spec): PLAYBOOK §16.18.
 - [ ] No overflow, hit areas OK, no line-box growth (measure with a script in the browser)
 - [ ] No browser console errors
 - [ ] Every statechart branch can be simulated and renders correctly
-- [ ] Longest Vietnamese label doesn't break layout
+- [ ] Longest label in EN and VI doesn't break layout; numbers follow the locale
 - [ ] Updated: specimen nav (`PAGES` in `design/specimen/specimen.js`) + `index.html`, README widget table, PLAYBOOK §8.4 and §19 decision log
 
 ## Working style
