@@ -1,0 +1,13 @@
+{
+  "name": "namnam-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NamNam design system: tokens, widgets and specimens for IoT UI (LVGL embedded + web). Philosophy: Calm Control.",
+  "scripts": {
+    "tokens": "node tools/tokens-build/build.mjs",
+    "tokens:check": "node tools/tokens-build/build.mjs --strict"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

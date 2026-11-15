@@ -1,0 +1,170 @@
+/*
+ * Slider widget (BEM block: slider) and Setpoint widget (BEM block: setpoint). Playbook §6, ISA-101 "value with context".
+ *   slider elements:   slider__track, slider__range (normal band), slider__fill, slider__thumb
+ *   setpoint elements: setpoint__label, setpoint__row, setpoint__value, setpoint__unit, setpoint__meta
+ *   States (never in class names): aria-disabled, aria-busy (pending), data-state="pressed|focused".
+ */
+.nn-slider {
+  --_pct: 0%;
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--nn-slider-hit-height);
+  touch-action: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nn-slider__track {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--nn-slider-thumb-size) / 2);
+  right: calc(var(--nn-slider-thumb-size) / 2);
+  height: var(--nn-slider-track-height);
+  transform: translateY(-50%);
+  border-radius: var(--nn-slider-radius);
+  background: var(--nn-slider-track-bg);
+}
+
+/* Normal operating range, drawn under the track (ISA-101: show what "normal" is). */
+.nn-slider__range {
+  position: absolute;
+  top: calc(100% + var(--nn-space-2xs));
+  height: var(--nn-stroke-focus);
+  border-radius: var(--nn-slider-radius);
+  background: var(--nn-slider-range-bg);
+}
+
+.nn-slider__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--_pct);
+  border-radius: inherit;
+  background: var(--nn-slider-fill-bg);
+}
+
+.nn-slider__thumb {
+  position: absolute;
+  top: 50%;
+  left: var(--_pct);
+  width: var(--nn-slider-thumb-size);
+  height: var(--nn-slider-thumb-size);
+  border: var(--nn-stroke-border) solid var(--nn-slider-thumb-border);
+  border-radius: var(--nn-slider-radius);
+  background: var(--nn-slider-thumb-bg);
+  transform: translate(-50%, -50%);
+}
+
+/* Pressed halo = state layer around the thumb. */
+.nn-slider__thumb::after {
+  content: '';
+  position: absolute;
+  inset: calc(var(--nn-slider-thumb-size) / -2);
+  border-radius: var(--nn-slider-radius);
+  background: var(--nn-slider-fill-bg);
+  opacity: 0;
+  transition: opacity var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+.nn-slider[data-state='pressed'] .nn-slider__thumb::after {
+  opacity: var(--nn-opacity-state-pressed);
+}
+
+:root[data-platform='web'] .nn-slider:hover:not([aria-disabled='true']) .nn-slider__thumb::after {
+  opacity: var(--nn-opacity-state-hover);
+}
+
+.nn-slider:focus-visible .nn-slider__thumb,
+.nn-slider[data-state='focused'] .nn-slider__thumb {
+  outline: var(--nn-stroke-focus) solid var(--nn-focus-ring);
+  outline-offset: var(--nn-stroke-focus-offset);
+}
+
+.nn-slider[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.nn-slider[aria-disabled='true'] .nn-slider__track,
+.nn-slider[aria-disabled='true'] .nn-slider__thumb {
+  opacity: var(--nn-slider-disabled-opacity);
+}
+
+/* ---- Setpoint ---- */
+.nn-setpoint {
+  display: grid;
+  gap: var(--nn-setpoint-gap);
+  min-width: 0;
+}
+
+.nn-setpoint__label {
+  margin: 0;
+  color: var(--nn-text-secondary);
+  font-size: var(--nn-setpoint-label-size);
+}
+
+.nn-setpoint__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nn-setpoint-gap);
+}
+
+.nn-setpoint__value {
+  flex: 1;
+  margin: 0;
+  color: var(--nn-text-primary);
+  font-size: var(--nn-setpoint-value-size);
+  font-weight: var(--nn-font-weight-semibold);
+  line-height: var(--nn-setpoint-value-line);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  transition: color var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+.nn-setpoint__unit {
+  margin-left: var(--nn-space-2xs);
+  color: var(--nn-text-secondary);
+  font-size: var(--nn-setpoint-unit-size);
+  font-weight: var(--nn-font-weight-regular);
+}
+
+.nn-setpoint__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--nn-space-xs);
+  min-height: var(--nn-setpoint-meta-line);
+  margin: 0;
+  color: var(--nn-text-secondary);
+  font-size: var(--nn-setpoint-meta-size);
+  line-height: var(--nn-setpoint-meta-line);
+}
+
+/* Pending: desired value shown, dimmed, with a small spinner (desired != reported yet). */
+.nn-setpoint[aria-busy='true'] .nn-setpoint__value {
+  color: var(--nn-setpoint-pending-fg);
+}
+
+.nn-setpoint[aria-busy='true'] .nn-setpoint__meta::before {
+  content: '';
+  width: var(--nn-setpoint-meta-size);
+  height: var(--nn-setpoint-meta-size);
+  border: var(--nn-stroke-focus) solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--nn-radius-pill);
+  animation: nn-spin 800ms linear infinite;
+}
+
+.nn-setpoint[data-error] .nn-setpoint__meta {
+  color: var(--nn-setpoint-error-fg);
+}
+
+.nn-setpoint[aria-disabled='true'] .nn-setpoint__value {
+  color: var(--nn-text-secondary);
+}
+
+@keyframes nn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

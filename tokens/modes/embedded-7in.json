@@ -1,0 +1,34 @@
+{
+  "$description": "Platform mode: 7in 1024x600 panel (~170 DPI), capacitive touch, arm's-length viewing. Starting values; confirm on the real board (playbook §5, §13).",
+  "type": {
+    "$type": "dimension",
+    "caption":  { "size": { "$value": "16px" }, "line-height": { "$value": "22px" } },
+    "body":     { "size": { "$value": "20px" }, "line-height": { "$value": "28px" } },
+    "label":    { "size": { "$value": "20px" }, "line-height": { "$value": "24px" } },
+    "title":    { "size": { "$value": "24px" }, "line-height": { "$value": "32px" } },
+    "headline": { "size": { "$value": "30px" }, "line-height": { "$value": "38px" } },
+    "display":  { "size": { "$value": "38px" }, "line-height": { "$value": "46px" } },
+    "hero":     { "size": { "$value": "48px" }, "line-height": { "$value": "56px" } }
+  },
+  "control": {
+    "$type": "dimension",
+    "height":    { "sm": { "$value": "48px" }, "md": { "$value": "60px" }, "lg": { "$value": "72px" } },
+    "padding-x": { "sm": { "$value": "16px" }, "md": { "$value": "20px" }, "lg": { "$value": "24px" } },
+    "icon-size": { "sm": { "$value": "20px" }, "md": { "$value": "24px" }, "lg": { "$value": "28px" } },
+    "gap":       { "$value": "8px" },
+    "switch-width":  { "$value": "60px" },
+    "switch-height": { "$value": "36px" },
+    "switch-thumb":  { "$value": "28px" },
+    "track-height":  { "$value": "8px" },
+    "thumb-size":    { "$value": "28px" },
+    "row-height":    { "$value": "72px" }
+  },
+  "icon": {
+    "$type": "dimension",
+    "size": { "md": { "$value": "24px" }, "lg": { "$value": "32px" }, "xl": { "$value": "40px" } }
+  },
+  "hit-area": {
+    "$type": "dimension",
+    "min": { "$value": "48px", "$description": "About 7mm at 170 DPI. Recommended target is 60px (about 9mm)." }
+  }
+}

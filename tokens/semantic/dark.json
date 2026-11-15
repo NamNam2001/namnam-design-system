@@ -1,0 +1,49 @@
+{
+  "$description": "Semantic color roles, dark theme (default for control-room use). Neutral UI, color only for meaning (ISA-101).",
+  "bg": {
+    "$type": "color",
+    "canvas":    { "$value": "{color.gray.950}" },
+    "surface-1": { "$value": "{color.gray.900}" },
+    "surface-2": { "$value": "{color.gray.850}" },
+    "surface-3": { "$value": "{color.gray.800}" }
+  },
+  "text": {
+    "$type": "color",
+    "primary":   { "$value": "{color.gray.50}" },
+    "secondary": { "$value": "{color.gray.400}" }
+  },
+  "border": {
+    "$type": "color",
+    "subtle":  { "$value": "{color.gray.800}" },
+    "default": { "$value": "{color.gray.700}" },
+    "strong":  { "$value": "{color.gray.500}" }
+  },
+  "accent": {
+    "$type": "color",
+    "default": { "$value": "{color.blue.600}", "$description": "Fill for primary actions." },
+    "text":    { "$value": "{color.blue.400}", "$description": "Accent used as text/icon on surfaces." }
+  },
+  "on": {
+    "$type": "color",
+    "accent":   { "$value": "{color.white}" },
+    "critical": { "$value": "{color.white}" }
+  },
+  "status": {
+    "$type": "color",
+    "success":         { "$value": "{color.green.400}" },
+    "warning":         { "$value": "{color.amber.400}" },
+    "critical":        { "$value": "{color.red.400}" },
+    "critical-strong": { "$value": "{color.red.600}", "$description": "Fill for destructive actions / critical banners." },
+    "info":            { "$value": "{color.cyan.400}" }
+  },
+  "focus": {
+    "$type": "color",
+    "ring": { "$value": "{color.blue.400}" }
+  },
+  "opacity": {
+    "$type": "number",
+    "state": {
+      "disabled": { "$value": 0.38, "$description": "Content opacity for disabled controls; audited >= 3:1 on bg.surface-3." }
+    }
+  }
+}

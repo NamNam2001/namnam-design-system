@@ -1,0 +1,129 @@
+/*
+ * List (BEM block: list) and ListItem widget (BEM block: list-item). Playbook §8.4.
+ *   list elements:      list__header
+ *   list-item elements: list-item__leading, list-item__content, list-item__title, list-item__subtitle, list-item__trailing
+ *   list-item modifier: list-item--interactive (whole row is one tap target; rendered as <button>)
+ *   States: :active / :focus-visible / :hover (web), aria-disabled, data-state forces a state in specimens.
+ */
+.nn-list {
+  overflow: hidden;
+  border: var(--nn-stroke-border) solid var(--nn-list-border);
+  border-radius: var(--nn-list-radius);
+  background: var(--nn-list-bg);
+}
+
+.nn-list__header {
+  margin: 0;
+  padding: var(--nn-space-sm) var(--nn-list-item-padding-x) var(--nn-space-2xs);
+  color: var(--nn-list-header-fg);
+  font-size: var(--nn-list-header-size);
+  font-weight: var(--nn-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nn-list-item {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: var(--nn-list-item-gap);
+  width: 100%;
+  min-height: var(--nn-list-item-min-height);
+  padding: var(--nn-list-item-padding-y) var(--nn-list-item-padding-x);
+  border: 0;
+  background: transparent;
+  color: var(--nn-text-primary);
+  font-family: var(--nn-font-family);
+  text-align: left;
+}
+
+.nn-list-item + .nn-list-item {
+  border-top: var(--nn-stroke-border) solid var(--nn-list-item-divider);
+}
+
+.nn-list-item__leading {
+  flex: none;
+  width: var(--nn-list-item-icon-size);
+  height: var(--nn-list-item-icon-size);
+  color: var(--nn-list-item-icon-fg);
+  font-size: var(--nn-list-item-icon-size);
+}
+
+.nn-list-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.nn-list-item__title {
+  display: block;
+  overflow: hidden;
+  font-size: var(--nn-list-item-title-size);
+  line-height: var(--nn-list-item-title-line);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nn-list-item__subtitle {
+  display: block;
+  overflow: hidden;
+  color: var(--nn-list-item-subtitle-fg);
+  font-size: var(--nn-list-item-subtitle-size);
+  line-height: var(--nn-list-item-subtitle-line);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nn-list-item__trailing {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--nn-space-xs);
+  color: var(--nn-list-item-trailing-fg);
+  font-size: var(--nn-list-item-title-size);
+  font-variant-numeric: tabular-nums;
+}
+
+.nn-list-item__trailing .material-symbols-rounded {
+  font-size: var(--nn-list-item-icon-size);
+}
+
+/* ---- Modifier: interactive ---- */
+.nn-list-item--interactive {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nn-list-item--interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--nn-text-primary);
+  opacity: 0;
+  transition: opacity var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+:root[data-platform='web'] .nn-list-item--interactive:hover:not([aria-disabled='true'])::after,
+.nn-list-item--interactive[data-state='hover']::after {
+  opacity: var(--nn-opacity-state-hover);
+}
+
+.nn-list-item--interactive:active:not([aria-disabled='true'])::after,
+.nn-list-item--interactive[data-state='pressed']::after {
+  opacity: var(--nn-opacity-state-pressed);
+}
+
+.nn-list-item--interactive:focus-visible,
+.nn-list-item--interactive[data-state='focused'] {
+  outline: var(--nn-stroke-focus) solid var(--nn-focus-ring);
+  outline-offset: calc(var(--nn-stroke-focus) * -1);
+}
+
+.nn-list-item[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.nn-list-item[aria-disabled='true'] > * {
+  opacity: var(--nn-list-item-disabled-opacity);
+}

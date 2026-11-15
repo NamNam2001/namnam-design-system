@@ -1,0 +1,283 @@
+/* Specimen page chrome (tooling, not product UI). Product components live in components/. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background: var(--nn-bg-canvas);
+  color: var(--nn-text-primary);
+  font-family: var(--nn-font-family);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ds-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--nn-bg-surface-1);
+  border-bottom: var(--nn-stroke-border) solid var(--nn-border-subtle);
+}
+
+.ds-header__title {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ds-header__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ds-header__nav a {
+  color: var(--nn-text-secondary);
+  text-decoration: none;
+}
+
+.ds-header__nav a[aria-current='page'] {
+  color: var(--nn-accent-text);
+}
+
+#ds-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ds-seg {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--nn-bg-surface-3);
+  border-radius: var(--nn-radius-sm);
+}
+
+.ds-seg__item {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: calc(var(--nn-radius-sm) - 2px);
+  background: transparent;
+  color: var(--nn-text-secondary);
+  font: 500 13px/1 var(--nn-font-family);
+  cursor: pointer;
+}
+
+.ds-seg__item[aria-checked='true'] {
+  background: var(--nn-bg-surface-1);
+  color: var(--nn-text-primary);
+}
+
+.ds-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+}
+
+.ds-section {
+  margin-bottom: 56px;
+}
+
+.ds-section > h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.ds-lead {
+  margin: 0 0 20px;
+  max-width: 72ch;
+  color: var(--nn-text-secondary);
+}
+
+.ds-panel {
+  padding: 24px;
+  background: var(--nn-bg-surface-1);
+  border: var(--nn-stroke-border) solid var(--nn-border-subtle);
+  border-radius: var(--nn-radius-lg);
+  overflow-x: auto;
+}
+
+.ds-mono {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  color: var(--nn-text-secondary);
+}
+
+.ds-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ds-table th,
+.ds-table td {
+  padding: 10px 12px;
+  border-bottom: var(--nn-stroke-border) solid var(--nn-border-subtle);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ds-table th {
+  color: var(--nn-text-secondary);
+  font-weight: 500;
+}
+
+.ds-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--nn-radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ds-badge--pass {
+  color: var(--nn-status-success);
+  background: color-mix(in srgb, var(--nn-status-success) 14%, transparent);
+}
+
+.ds-badge--fail {
+  color: var(--nn-status-critical);
+  background: color-mix(in srgb, var(--nn-status-critical) 14%, transparent);
+}
+
+.ds-note {
+  color: var(--nn-text-secondary);
+  font-size: 13px;
+}
+
+/* Variant x state matrix */
+.ds-matrix {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ds-matrix th,
+.ds-matrix td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ds-matrix thead th {
+  border-bottom: var(--nn-stroke-border) solid var(--nn-border-subtle);
+  color: var(--nn-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.ds-matrix tbody th {
+  color: var(--nn-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ds-matrix .is-na {
+  opacity: 0.3;
+}
+
+.ds-na {
+  display: block;
+  margin-top: 6px;
+  color: var(--nn-text-secondary);
+  font-size: 11px;
+}
+
+.ds-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--nn-text-secondary);
+}
+
+.ds-statechart {
+  margin: 20px 0 0;
+  padding: 16px;
+  overflow-x: auto;
+  border-radius: var(--nn-radius-md);
+  background: var(--nn-bg-surface-2);
+  color: var(--nn-text-secondary);
+  font: 12px/1.6 ui-monospace, 'Cascadia Code', Consolas, monospace;
+}
+
+/* Native-resolution device frame (7" 1024x600 @1x) */
+.ds-frame-wrap {
+  overflow-x: auto;
+}
+
+.ds-frame {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 1024px;
+  height: 600px;
+  overflow: hidden;
+  border: var(--nn-stroke-border) solid var(--nn-border-default);
+  border-radius: 4px;
+  background: var(--nn-bg-canvas);
+  color: var(--nn-text-primary);
+}
+
+.ds-frame__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nn-space-sm) var(--nn-space-lg);
+  color: var(--nn-text-secondary);
+  font-size: var(--nn-type-caption-size);
+}
+
+.ds-frame__body {
+  min-height: 0;
+  padding: 0 var(--nn-space-lg) var(--nn-space-lg);
+}
+
+/* Material Symbols: icon font. Axes are set per use (FILL = active state, playbook §7). */
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+@media (max-width: 640px) {
+  .ds-header,
+  .ds-main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

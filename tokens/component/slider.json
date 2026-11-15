@@ -1,0 +1,30 @@
+{
+  "$description": "Component tokens for Slider (BEM: slider) and Setpoint (BEM: setpoint). Values are shown with context: normal range band + current reading (ISA-101).",
+  "component": {
+    "slider": {
+      "track-height": { "$value": "{control.track-height}" },
+      "thumb-size":   { "$value": "{control.thumb-size}" },
+      "hit-height":   { "$value": "{control.height.md}" },
+      "radius":       { "$value": "{radius.pill}" },
+      "track-bg":     { "$value": "{border.default}" },
+      "fill-bg":      { "$value": "{accent.default}" },
+      "thumb-bg":     { "$value": "{on.accent}" },
+      "thumb-border": { "$value": "{border.strong}" },
+      "range-bg":     { "$value": "{text.secondary}" },
+      "label-size":   { "$value": "{type.body.size}" },
+      "value-size":   { "$value": "{type.title.size}" },
+      "disabled-opacity": { "$value": "{opacity.state.disabled}" }
+    },
+    "setpoint": {
+      "gap":         { "$value": "{space.md}" },
+      "label-size":  { "$value": "{type.body.size}" },
+      "value-size":  { "$value": "{type.hero.size}" },
+      "value-line":  { "$value": "{type.hero.line-height}" },
+      "unit-size":   { "$value": "{type.title.size}" },
+      "meta-size":   { "$value": "{type.caption.size}" },
+      "meta-line":   { "$value": "{type.caption.line-height}" },
+      "pending-fg":  { "$value": "{text.secondary}" },
+      "error-fg":    { "$value": "{status.critical}" }
+    }
+  }
+}

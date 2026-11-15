@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Device card · NamNam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+  <link rel="stylesheet" href="../../build/web/tokens.css">
+  <link rel="stylesheet" href="specimen.css">
+  <link rel="stylesheet" href="components/button.css">
+  <link rel="stylesheet" href="components/toggle.css">
+  <link rel="stylesheet" href="components/device-card.css">
+  <script src="../../build/web/tokens.js"></script>
+  <script src="specimen.js"></script>
+  <script src="components/widgets.js"></script>
+  <style>
+    .cards { display: grid; gap: var(--nn-space-md); grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .cards--compact { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .caption { margin: 8px 0 0; color: var(--nn-text-secondary); font-size: 12px; }
+    .dash { display: grid; grid-template-rows: auto 1fr; gap: var(--nn-space-md); height: 100%; }
+    .dash__title { display: flex; justify-content: space-between; align-items: baseline; margin: 0; font-size: var(--nn-type-headline-size); line-height: var(--nn-type-headline-line-height); font-weight: var(--nn-font-weight-semibold); }
+    .dash__summary { color: var(--nn-text-secondary); font-size: var(--nn-type-body-size); font-weight: var(--nn-font-weight-regular); }
+    .dash__grid { display: grid; gap: var(--nn-space-md); grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); min-height: 0; }
+  </style>
+</head>
+<body>
+  <header class="ds-header">
+    <h1 class="ds-header__title">NamNam <nav class="ds-header__nav" id="ds-nav" aria-label="Specimens"></nav></h1>
+    <div id="ds-toolbar"></div>
+  </header>
+
+  <main class="ds-main">
+    <section class="ds-section">
+      <h2>Device card <span class="ds-mono">· widget · BEM block <code>device-card</code></span></h2>
+      <p class="ds-lead">Bất thường chỉ đổi <strong>dòng trạng thái và icon</strong>, card không bao giờ đổi màu (ISA-101). Icon <strong>đặc</strong> = thiết bị đang bật. Mỗi trạng thái luôn có chấm màu + chữ, không chỉ dùng màu.</p>
+      <div class="ds-panel"><div class="cards" id="gallery"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Modifiers</h2>
+      <p class="ds-lead"><code>--compact</code> cho lưới dày; <code>--interactive</code> khi cả card là một nút (mở chi tiết). Card có toggle thì card không bấm được.</p>
+      <div class="ds-panel">
+        <div class="cards cards--compact" id="compact"></div>
+        <div class="cards" style="margin-top: 24px" id="interactive"></div>
+      </div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Live · statechart</h2>
+      <div class="ds-panel">
+        <div class="ds-controls">
+          <span>Kết quả mô phỏng:</span><span id="outcome"></span>
+          <span id="offline-btn"></span>
+        </div>
+        <div class="cards" id="live"></div>
+      </div>
+    </section>
+
+    <section class="ds-section" id="frame-section">
+      <h2>In context · 7" 1024×600 @1x</h2>
+      <p class="ds-lead">Dashboard một phòng: 6 card, lưới 3×2. Màn hình bình thường thì yên lặng; chỗ có màu chính là chỗ cần chú ý.</p>
+      <div class="ds-frame-wrap"><div class="ds-frame" id="frame"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Tokens</h2>
+      <div class="ds-panel" id="tokens"></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    const { el } = DS;
+    let outcome = 'ack';
+
+    const SAMPLES = [
+      { caption: 'ok · đang bật', icon: 'ac_unit', title: 'Điều hoà', value: '24', unit: '°C', active: true, status: 'ok', statusText: 'Đang làm mát · phòng 26°C' },
+      { caption: 'ok · đã tắt', icon: 'lightbulb', title: 'Đèn trần', value: 'Tắt', unit: '', active: false, status: 'ok', statusText: 'Đã tắt' },
+      { caption: 'warning', icon: 'mode_fan', title: 'Quạt hút', value: 'Mức 3', unit: '', active: true, status: 'warning', statusText: 'Lọc gió cần vệ sinh' },
+      { caption: 'critical · không điều khiển', icon: 'thermostat', title: 'Cảm biến nhiệt', value: '—', unit: '°C', active: false, status: 'critical', statusText: 'Lỗi cảm biến · kiểm tra dây', control: null },
+      { caption: 'offline', icon: 'power', title: 'Ổ cắm thông minh', value: '0,8', unit: 'kW', active: true, status: 'offline', statusText: 'Mất kết nối · 5 phút trước' },
+      { caption: 'pending', icon: 'ac_unit', title: 'Điều hoà phòng B', value: '22', unit: '°C', active: true, status: 'ok', statusText: 'Đang bật…', pending: true },
+    ];
+
+    const card = (s, extra = {}) => NN.deviceCard({ control: 'toggle', ...s, ...extra });
+
+    function liveCard(props) {
+      let handler = null;
+      const c = NN.deviceCard({ control: 'toggle', ...props, onToggle: (next) => handler(next) });
+      handler = NN.bindOnOff(c, { getOutcome: () => outcome });
+      return c;
+    }
+
+    function renderGallery() {
+      document.getElementById('gallery').replaceChildren(...SAMPLES.map((s) =>
+        el('div', {}, card(s), el('p', { class: 'caption ds-mono', text: s.caption }))));
+    }
+
+    function renderModifiers() {
+      document.getElementById('compact').replaceChildren(...SAMPLES.slice(0, 5).map((s) => card(s, { compact: true })));
+      document.getElementById('interactive').replaceChildren(...[['default'], ['pressed'], ['focused']].map(([state]) =>
+        el('div', {},
+          NN.deviceCard({ icon: 'meeting_room', title: 'Phòng họp A', value: '3', unit: 'thiết bị đang chạy', status: 'ok', statusText: 'Bình thường', active: true, control: 'chevron', state }),
+          el('p', { class: 'caption ds-mono', text: `--interactive · ${state}` }))));
+    }
+
+    function renderLive() {
+      const cards = [
+        liveCard({ icon: 'ac_unit', title: 'Điều hoà', value: '24', unit: '°C', active: true, status: 'ok', statusText: 'Đang chạy' }),
+        liveCard({ icon: 'lightbulb', title: 'Đèn trần', value: '70', unit: '%', active: false, status: 'ok', statusText: 'Đã tắt' }),
+        liveCard({ icon: 'mode_fan', title: 'Quạt hút', value: 'Mức 2', unit: '', active: true, status: 'ok', statusText: 'Đang chạy' }),
+      ];
+      let offline = false;
+      const btn = NN.button({ variant: 'secondary', size: 'sm', icon: 'wifi_off', label: 'Mô phỏng mất kết nối', onClick: () => {
+        offline = !offline;
+        cards[0].update(offline ? { status: 'offline', statusText: 'Mất kết nối · vừa xong' } : { status: 'ok', statusText: 'Đang chạy' });
+        btn.querySelector('.nn-button__label').textContent = offline ? 'Khôi phục kết nối' : 'Mô phỏng mất kết nối';
+      } });
+      document.getElementById('offline-btn').replaceWith(btn);
+      document.getElementById('live').replaceChildren(...cards);
+    }
+
+    function renderFrame() {
+      const section = document.getElementById('frame-section');
+      section.hidden = DS.platform() !== 'embedded-7in';
+      if (section.hidden) return;
+      const grid = el('div', { class: 'dash__grid' },
+        liveCard({ icon: 'ac_unit', title: 'Điều hoà', value: '24', unit: '°C', active: true, status: 'ok', statusText: 'Đang làm mát · phòng 26°C' }),
+        liveCard({ icon: 'lightbulb', title: 'Đèn trần', value: '70', unit: '%', active: true, status: 'ok', statusText: 'Đang bật' }),
+        liveCard({ icon: 'mode_fan', title: 'Quạt hút', value: 'Mức 3', unit: '', active: true, status: 'warning', statusText: 'Lọc gió cần vệ sinh' }),
+        liveCard({ icon: 'blinds', title: 'Rèm cửa', value: 'Mở', unit: '', active: false, status: 'ok', statusText: 'Đã dừng' }),
+        NN.deviceCard({ icon: 'humidity_percentage', title: 'Độ ẩm', value: '58', unit: '%', status: 'ok', statusText: 'Bình thường 40–60%', control: null }),
+        liveCard({ icon: 'power', title: 'Ổ cắm máy chiếu', value: '0,2', unit: 'kW', active: true, status: 'offline', statusText: 'Mất kết nối · 5 phút trước' }));
+      document.getElementById('frame').replaceChildren(
+        el('div', { class: 'ds-frame__bar' },
+          el('span', { text: '09:41 · Thứ Hai 16/11' }),
+          el('span', { class: 'material-symbols-rounded', 'aria-hidden': 'true', text: 'wifi' })),
+        el('div', { class: 'ds-frame__body' },
+          el('div', { class: 'dash' },
+            el('p', { class: 'dash__title' }, 'Phòng họp A', el('span', { class: 'dash__summary', text: '5/6 thiết bị trực tuyến · 1 cảnh báo' })),
+            grid)));
+    }
+
+    document.getElementById('outcome').replaceWith(NN.choice('outcome',
+      [['ack', 'Thành công'], ['error', 'Lỗi'], ['timeout', 'Hết thời gian']], outcome, (v) => { outcome = v; }));
+
+    function render() {
+      renderFrame();
+      document.getElementById('tokens').replaceChildren(DS.tokenTable('device-card'));
+    }
+    DS.onChange(render);
+    render();
+    renderGallery();
+    renderModifiers();
+    renderLive();
+  })();
+  </script>
+</body>
+</html>

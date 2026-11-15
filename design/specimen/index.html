@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Specimens · NamNam</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../../build/web/tokens.css">
+  <link rel="stylesheet" href="specimen.css">
+  <script src="../../build/web/tokens.js"></script>
+  <script src="specimen.js"></script>
+  <style>
+    .cards { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card { display: block; padding: 20px; background: var(--nn-bg-surface-1); border: var(--nn-stroke-border) solid var(--nn-border-subtle); border-radius: var(--nn-radius-lg); color: inherit; text-decoration: none; }
+    .card:hover { border-color: var(--nn-border-default); }
+    .card h3 { margin: 0 0 6px; font-size: 17px; }
+    .card p { margin: 0; color: var(--nn-text-secondary); font-size: 14px; }
+    .todo { opacity: .5; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <header class="ds-header">
+    <h1 class="ds-header__title">NamNam
+      <nav class="ds-header__nav" id="ds-nav" aria-label="Specimens"></nav>
+    </h1>
+    <div id="ds-toolbar"></div>
+  </header>
+  <main class="ds-main">
+    <section class="ds-section">
+      <h2>Specimens</h2>
+      <p class="ds-lead">Mỗi trang hiển thị một tầng hoặc một widget với mọi modifier × state, dùng token đã build. Thứ tự xây: Tokens → Icons → Widgets → Modules → Screens.</p>
+      <div class="ds-grid cards">
+        <a class="card" href="foundations.html"><h3>Foundations</h3><p>Màu, tương phản, chữ, spacing, radius, state layer, motion, icon.</p></a>
+        <a class="card" href="button.html"><h3>Button</h3><p>Widget · 4 variant × 6 state × 3 size, kèm khung màn 7".</p></a>
+        <a class="card" href="toggle.html"><h3>Toggle</h3><p>Widget · off/on × 6 state, pending theo statechart, mô phỏng lệnh.</p></a>
+        <a class="card" href="slider.html"><h3>Slider · Setpoint</h3><p>Widget · giá trị kèm ngữ cảnh: vùng bình thường, giá trị hiện tại, pending/lỗi.</p></a>
+        <a class="card" href="list-item.html"><h3>List item</h3><p>Widget · cài đặt, danh sách thiết bị, thông tin; tương tác và chỉ đọc.</p></a>
+        <a class="card" href="device-card.html"><h3>Device card</h3><p>Widget · ok / cảnh báo / lỗi / offline / pending, kèm dashboard 7".</p></a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

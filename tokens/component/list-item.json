@@ -1,0 +1,28 @@
+{
+  "$description": "Component tokens for List (BEM: list) and ListItem (BEM: list-item).",
+  "component": {
+    "list": {
+      "bg":           { "$value": "{bg.surface-1}" },
+      "border":       { "$value": "{border.subtle}" },
+      "radius":       { "$value": "{radius.lg}" },
+      "header-size":  { "$value": "{type.caption.size}" },
+      "header-fg":    { "$value": "{text.secondary}" }
+    },
+    "list-item": {
+      "min-height":     { "$value": "{control.row-height}" },
+      "padding-x":      { "$value": "{space.md}" },
+      "padding-y":      { "$value": "{space.xs}" },
+      "gap":            { "$value": "{space.md}" },
+      "icon-size":      { "$value": "{icon.size.md}" },
+      "icon-fg":        { "$value": "{text.secondary}" },
+      "title-size":     { "$value": "{type.body.size}" },
+      "title-line":     { "$value": "{type.body.line-height}" },
+      "subtitle-size":  { "$value": "{type.caption.size}" },
+      "subtitle-line":  { "$value": "{type.caption.line-height}" },
+      "subtitle-fg":    { "$value": "{text.secondary}" },
+      "trailing-fg":    { "$value": "{text.secondary}" },
+      "divider":        { "$value": "{border.subtle}" },
+      "disabled-opacity": { "$value": "{opacity.state.disabled}" }
+    }
+  }
+}

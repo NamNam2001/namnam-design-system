@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Button · NamNam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+  <link rel="stylesheet" href="../../build/web/tokens.css">
+  <link rel="stylesheet" href="specimen.css">
+  <link rel="stylesheet" href="components/button.css">
+  <script src="../../build/web/tokens.js"></script>
+  <script src="specimen.js"></script>
+  <script src="components/widgets.js"></script>
+  <style>
+    .matrix { border-collapse: separate; border-spacing: 0; }
+    .matrix th, .matrix td { padding: 12px 14px; text-align: left; }
+    .matrix thead th { color: var(--nn-text-secondary); font-weight: 500; font-size: 13px; border-bottom: var(--nn-stroke-border) solid var(--nn-border-subtle); }
+    .matrix tbody th { color: var(--nn-text-secondary); font-weight: 600; font-size: 13px; white-space: nowrap; }
+    .matrix .is-na { opacity: .3; }
+    .matrix .na-label { display: block; margin-top: 6px; font-size: 11px; color: var(--nn-text-secondary); }
+    .sizes { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+    .sizes__item { display: grid; gap: 10px; justify-items: start; }
+    .playground { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .frame-wrap { overflow-x: auto; }
+    .frame { position: relative; width: 1024px; height: 600px; background: var(--nn-bg-canvas); border: var(--nn-stroke-border) solid var(--nn-border-default); border-radius: 4px; display: grid; grid-template-rows: auto 1fr auto; }
+    .frame__bar { display: flex; justify-content: space-between; align-items: center; padding: var(--nn-space-sm) var(--nn-space-lg); color: var(--nn-text-secondary); font-size: var(--nn-type-caption-size); }
+    .frame__body { display: grid; place-items: center; }
+    .frame__card { width: 560px; padding: var(--nn-space-lg); background: var(--nn-bg-surface-1); border: var(--nn-stroke-border) solid var(--nn-border-subtle); border-radius: var(--nn-radius-lg); display: grid; gap: var(--nn-space-md); }
+    .frame__title { margin: 0; font-size: var(--nn-type-title-size); line-height: var(--nn-type-title-line-height); font-weight: var(--nn-font-weight-semibold); }
+    .frame__value { font-size: var(--nn-type-hero-size); line-height: var(--nn-type-hero-line-height); font-weight: var(--nn-font-weight-semibold); }
+    .frame__hint { color: var(--nn-text-secondary); font-size: var(--nn-type-body-size); line-height: var(--nn-type-body-line-height); }
+    .frame__actions { display: flex; gap: var(--nn-space-sm); }
+    .frame__actions .nn-button { flex: 1; }
+  </style>
+</head>
+<body>
+  <header class="ds-header">
+    <h1 class="ds-header__title">NamNam
+      <nav class="ds-header__nav" id="ds-nav" aria-label="Specimens"></nav>
+    </h1>
+    <div id="ds-toolbar"></div>
+  </header>
+
+  <main class="ds-main">
+    <section class="ds-section">
+      <h2>Button <span class="ds-mono">· widget · BEM block <code>button</code></span></h2>
+      <p class="ds-lead">Mọi variant × mọi state, đúng kích thước thật của platform đang chọn. Phản hồi khi chạm xuống, hành động khi nhấc tay; loading giữ nguyên chiều rộng; state không nằm trong tên class.</p>
+      <div class="ds-panel"><table class="matrix" id="matrix"></table></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Sizes</h2>
+      <p class="ds-lead" id="sizes-lead"></p>
+      <div class="ds-panel"><div class="sizes" id="sizes"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Playground</h2>
+      <p class="ds-lead">Nút thật. Bấm "Áp dụng" để xem loading → xong. Trên web có hover; trên embedded thì không.</p>
+      <div class="ds-panel"><div class="playground" id="playground"></div></div>
+    </section>
+
+    <section class="ds-section" id="frame-section">
+      <h2>In context · 7" 1024×600 @1x</h2>
+      <p class="ds-lead">Khung màn thật, tỉ lệ 1:1 pixel. Kéo ngang nếu cửa sổ hẹp hơn 1024px.</p>
+      <div class="frame-wrap"><div class="frame" id="frame"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Tokens</h2>
+      <p class="ds-lead">Giá trị đã resolve cho theme/platform đang chọn. Cột C là macro trong <code>build/embedded/ui_theme_*.h</code>.</p>
+      <div class="ds-panel"><table class="ds-table" id="tokens"></table></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    const { el } = DS;
+    const VARIANTS = [
+      ['primary', 'Bật', 'power_settings_new'],
+      ['secondary', 'Cài đặt', 'settings'],
+      ['ghost', 'Huỷ', null],
+      ['danger', 'Tắt hệ thống', 'power_settings_new'],
+    ];
+    const STATES = ['default', 'hover', 'pressed', 'focused', 'disabled', 'loading'];
+
+    const button = NN.button;
+
+    function renderMatrix() {
+      const touch = DS.isTouch();
+      document.getElementById('matrix').replaceChildren(
+        el('thead', {}, el('tr', {}, el('th', { text: '' }), ...STATES.map((s) => el('th', { text: s })))),
+        el('tbody', {}, ...VARIANTS.map(([variant, label, icon]) => el('tr', {},
+          el('th', { scope: 'row', text: `--${variant}` }),
+          ...STATES.map((state) => {
+            const na = state === 'hover' && touch;
+            return el('td', { class: na ? 'is-na' : null },
+              button({ variant, state, label, icon }),
+              na ? el('span', { class: 'na-label', text: 'không có trên cảm ứng' }) : '');
+          })))));
+    }
+
+    function renderSizes() {
+      const h = (s) => DS.token(`button.height.${s}`).css;
+      document.getElementById('sizes-lead').textContent =
+        `Chiều cao: sm ${h('sm')} · md ${h('md')} · lg ${h('lg')}. Vùng chạm tối thiểu của platform: ${DS.token('hit-area.min').css}.`;
+      document.getElementById('sizes').replaceChildren(...['sm', 'md', 'lg'].map((size) =>
+        el('div', { class: 'sizes__item' },
+          button({ size, label: 'Bật', icon: 'power_settings_new' }),
+          button({ size, variant: 'secondary', label: 'Cài đặt', icon: 'settings' }),
+          el('span', { class: 'ds-mono', text: `--${size} · ${h(size)}` }))));
+    }
+
+    function renderPlayground() {
+      const apply = button({ label: 'Áp dụng', icon: 'check' });
+      apply.addEventListener('click', () => {
+        if (apply.getAttribute('aria-busy') === 'true') return;
+        apply.setAttribute('aria-busy', 'true');
+        setTimeout(() => apply.removeAttribute('aria-busy'), 1500);
+      });
+      document.getElementById('playground').replaceChildren(
+        apply,
+        button({ variant: 'secondary', label: 'Chế độ quạt', icon: 'mode_fan' }),
+        button({ variant: 'ghost', label: 'Huỷ' }),
+        button({ variant: 'danger', label: 'Dừng khẩn', icon: 'warning' }),
+        button({ state: 'disabled', label: 'Không khả dụng' }));
+    }
+
+    function renderFrame() {
+      const section = document.getElementById('frame-section');
+      section.hidden = DS.platform() !== 'embedded-7in';
+      if (section.hidden) return;
+      document.getElementById('frame').replaceChildren(
+        el('div', { class: 'frame__bar' },
+          el('span', { text: '09:41 · Phòng họp A' }),
+          el('span', { class: 'material-symbols-rounded', 'aria-hidden': 'true', text: 'wifi' })),
+        el('div', { class: 'frame__body' },
+          el('div', { class: 'frame__card' },
+            el('p', { class: 'frame__title', text: 'Điều hoà' }),
+            el('div', { class: 'frame__value', text: '24°C' }),
+            el('div', { class: 'frame__hint', text: 'Nhiệt độ phòng 26°C · Quạt tự động' }),
+            el('div', { class: 'frame__actions' },
+              button({ variant: 'secondary', label: 'Chế độ', icon: 'mode_fan' }),
+              button({ label: 'Bật', icon: 'power_settings_new' })))),
+        el('div'));
+    }
+
+    function renderTokens() {
+      const rows = Object.entries(DS.tokens()).filter(([name]) => name.startsWith('button.'));
+      document.getElementById('tokens').replaceChildren(
+        el('thead', {}, el('tr', {}, ...['Token', 'Value', 'CSS', 'C (LVGL)'].map((h) => el('th', { text: h })))),
+        el('tbody', {}, ...rows.map(([name, t]) => el('tr', {},
+          el('td', { style: 'font-weight:600', text: name }),
+          el('td', { class: 'ds-mono', text: t.css }),
+          el('td', { class: 'ds-mono', text: t.cssVar }),
+          el('td', { class: 'ds-mono', text: t.c })))));
+    }
+
+    function render() { renderMatrix(); renderSizes(); renderPlayground(); renderFrame(); renderTokens(); }
+    DS.onChange(render);
+    render();
+  })();
+  </script>
+</body>
+</html>

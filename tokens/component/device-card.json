@@ -1,0 +1,37 @@
+{
+  "$description": "Component tokens for DeviceCard (BEM: device-card). Abnormal states only change the status row and icon, never the whole card (ISA-101, playbook §8.3).",
+  "component": {
+    "device-card": {
+      "bg":          { "$value": "{bg.surface-1}" },
+      "border":      { "$value": "{border.subtle}" },
+      "radius":      { "$value": "{radius.lg}" },
+      "padding":     { "$value": "{space.md}" },
+      "gap":         { "$value": "{space.sm}" },
+      "icon-size":   { "$value": "{icon.size.lg}" },
+      "icon-off":    { "$value": "{text.secondary}" },
+      "icon-on":     { "$value": "{accent.text}" },
+      "title-size":  { "$value": "{type.body.size}" },
+      "title-line":  { "$value": "{type.body.line-height}" },
+      "value-size":  { "$value": "{type.headline.size}" },
+      "value-line":  { "$value": "{type.headline.line-height}" },
+      "unit-size":   { "$value": "{type.body.size}" },
+      "meta-size":   { "$value": "{type.caption.size}" },
+      "meta-line":   { "$value": "{type.caption.line-height}" },
+      "meta-fg":     { "$value": "{text.secondary}" },
+      "dot-size":    { "$value": "{space.xs}" },
+      "status": {
+        "ok":       { "$value": "{status.success}" },
+        "warning":  { "$value": "{status.warning}" },
+        "critical": { "$value": "{status.critical}" },
+        "info":     { "$value": "{status.info}" },
+        "offline":  { "$value": "{text.secondary}" }
+      },
+      "compact": {
+        "padding":    { "$value": "{space.sm}" },
+        "value-size": { "$value": "{type.title.size}" },
+        "value-line": { "$value": "{type.title.line-height}" },
+        "icon-size":  { "$value": "{icon.size.md}" }
+      }
+    }
+  }
+}

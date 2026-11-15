@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Toggle · NamNam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+  <link rel="stylesheet" href="../../build/web/tokens.css">
+  <link rel="stylesheet" href="specimen.css">
+  <link rel="stylesheet" href="components/toggle.css">
+  <link rel="stylesheet" href="components/list-item.css">
+  <script src="../../build/web/tokens.js"></script>
+  <script src="specimen.js"></script>
+  <script src="components/widgets.js"></script>
+</head>
+<body>
+  <header class="ds-header">
+    <h1 class="ds-header__title">NamNam <nav class="ds-header__nav" id="ds-nav" aria-label="Specimens"></nav></h1>
+    <div id="ds-toolbar"></div>
+  </header>
+
+  <main class="ds-main">
+    <section class="ds-section">
+      <h2>Toggle <span class="ds-mono">· widget · BEM block <code>toggle</code> · role=switch</span></h2>
+      <p class="ds-lead">Bật/tắt một thiết bị. Vùng chạm là cả nút (≥ control.height.md), track nhìn thấy nhỏ hơn. <strong>Pending</strong>: thumb đã ở vị trí mong muốn, có vòng xoay, chờ thiết bị xác nhận.</p>
+      <div class="ds-panel"><table class="ds-matrix" id="matrix"></table></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Statechart: desired vs reported</h2>
+      <p class="ds-lead">Bấm toggle để gửi lệnh mô phỏng. Chọn kết quả trước khi bấm. Ổ cắm đang mất kết nối nên toggle bị khoá.</p>
+      <div class="ds-panel">
+        <div class="ds-controls"><span>Kết quả mô phỏng:</span><span id="outcome"></span></div>
+        <div id="demo" style="max-width: 640px"></div>
+        <pre class="ds-statechart">        tap
+ off ─────────► pending ──ack──────────► on
+  ▲               │
+  │               ├── error ───► off + "Lệnh bị từ chối"
+  └───────────────┴── timeout ─► off + "Không phản hồi"
+ * ──offline──► disabled + "Mất kết nối"</pre>
+      </div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Tokens</h2>
+      <div class="ds-panel" id="tokens"></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    const { el } = DS;
+    const STATES = ['default', 'hover', 'pressed', 'focused', 'disabled', 'pending'];
+    let outcome = 'ack';
+
+    function renderMatrix() {
+      const touch = DS.isTouch();
+      document.getElementById('matrix').replaceChildren(
+        el('thead', {}, el('tr', {}, el('th', { text: '' }), ...STATES.map((s) => el('th', { text: s })))),
+        el('tbody', {}, ...[[false, 'off'], [true, 'on']].map(([checked, name]) => el('tr', {},
+          el('th', { scope: 'row', text: name }),
+          ...STATES.map((state) => {
+            const na = state === 'hover' && touch;
+            return el('td', { class: na ? 'is-na' : null },
+              NN.toggle({ checked, state, label: `${name} ${state}` }),
+              na ? el('span', { class: 'ds-na', text: 'không có trên cảm ứng' }) : '');
+          })))));
+    }
+
+    function run(next, t, subtitle, onText, offText) {
+      const before = !next;
+      t.setAttribute('aria-checked', String(next));
+      t.setAttribute('aria-busy', 'true');
+      subtitle.textContent = next ? 'Đang bật…' : 'Đang tắt…';
+      NN.command(outcome)
+        .then(() => { subtitle.textContent = next ? onText : offText; })
+        .catch((reason) => {
+          t.setAttribute('aria-checked', String(before));
+          subtitle.textContent = reason === 'timeout' ? 'Không phản hồi · đã giữ trạng thái cũ' : 'Lệnh bị từ chối · đã giữ trạng thái cũ';
+        })
+        .finally(() => t.removeAttribute('aria-busy'));
+    }
+
+    function renderDemo() {
+      const devices = [
+        ['lightbulb', 'Đèn trần', 'Đang bật', 'Đã tắt', true],
+        ['mode_fan', 'Quạt hút', 'Đang chạy', 'Đã tắt', false],
+        ['ac_unit', 'Điều hoà', 'Đang làm mát', 'Đã tắt', true],
+        ['power', 'Ổ cắm thông minh', 'Có điện', 'Ngắt điện', false, true],
+      ];
+      const items = devices.map(([glyph, title, onText, offText, checked, offline]) => NN.listItem({
+        icon: glyph,
+        title,
+        subtitle: offline ? 'Mất kết nối · 5 phút trước' : checked ? onText : offText,
+        trailing: NN.toggle({
+          checked,
+          label: title,
+          state: offline ? 'disabled' : 'default',
+          onToggle: (next, t) => run(next, t, t.closest('.nn-list-item').querySelector('.nn-list-item__subtitle'), onText, offText),
+        }),
+      }));
+      document.getElementById('demo').replaceChildren(NN.list({ header: 'Phòng họp A', items }));
+    }
+
+    document.getElementById('outcome').replaceWith(NN.choice('outcome',
+      [['ack', 'Thành công'], ['error', 'Lỗi'], ['timeout', 'Hết thời gian']], outcome, (v) => { outcome = v; }));
+
+    function render() {
+      renderMatrix();
+      document.getElementById('tokens').replaceChildren(DS.tokenTable('toggle'));
+    }
+    DS.onChange(render);
+    render();
+    renderDemo();
+  })();
+  </script>
+</body>
+</html>

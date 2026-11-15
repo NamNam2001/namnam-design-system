@@ -1,0 +1,25 @@
+{
+  "$description": "Component tokens for the Toggle widget (BEM block: toggle, role=switch). Pending state follows the desired/reported statechart (playbook §6.2).",
+  "component": {
+    "toggle": {
+      "width":      { "$value": "{control.switch-width}" },
+      "height":     { "$value": "{control.switch-height}" },
+      "thumb-size": { "$value": "{control.switch-thumb}" },
+      "hit-area":   { "$value": "{control.height.md}" },
+      "radius":     { "$value": "{radius.pill}" },
+      "duration":   { "$value": "{motion.duration.enter}" },
+      "easing":     { "$value": "{motion.easing.standard}" },
+      "off": {
+        "track-bg":     { "$value": "{bg.surface-3}" },
+        "track-border": { "$value": "{border.strong}" },
+        "thumb":        { "$value": "{text.secondary}" }
+      },
+      "on": {
+        "track-bg":     { "$value": "{accent.default}" },
+        "track-border": { "$value": "{accent.default}" },
+        "thumb":        { "$value": "{on.accent}" }
+      },
+      "disabled-opacity": { "$value": "{opacity.state.disabled}" }
+    }
+  }
+}

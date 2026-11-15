@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Foundations · NamNam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+  <link rel="stylesheet" href="../../build/web/tokens.css">
+  <link rel="stylesheet" href="specimen.css">
+  <script src="../../build/web/tokens.js"></script>
+  <script src="specimen.js"></script>
+  <style>
+    .swatches { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .swatch { border: var(--nn-stroke-border) solid var(--nn-border-subtle); border-radius: var(--nn-radius-md); overflow: hidden; background: var(--nn-bg-surface-2); }
+    .swatch__chip { height: 64px; border-bottom: var(--nn-stroke-border) solid var(--nn-border-subtle); }
+    .swatch__meta { padding: 10px 12px; }
+    .swatch__name { font-weight: 600; font-size: 13px; }
+    .group-title { margin: 24px 0 10px; font-size: 13px; font-weight: 600; color: var(--nn-text-secondary); text-transform: uppercase; letter-spacing: .06em; }
+    .group-title:first-child { margin-top: 0; }
+    .type-row { display: grid; grid-template-columns: 160px 1fr; gap: 16px; align-items: baseline; padding: 14px 0; border-bottom: var(--nn-stroke-border) solid var(--nn-border-subtle); }
+    .type-row:last-child { border-bottom: 0; }
+    .space-row { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: center; padding: 6px 0; }
+    .space-bar { height: 16px; background: var(--nn-accent-default); border-radius: 2px; }
+    .radius-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .radius-box { height: 96px; background: var(--nn-bg-surface-3); border: var(--nn-stroke-border) solid var(--nn-border-default); display: grid; place-items: center; font-weight: 600; }
+    .nest { display: inline-flex; padding: var(--nn-space-xs); background: var(--nn-bg-surface-3); border-radius: var(--nn-radius-lg); gap: var(--nn-space-xs); }
+    .nest__inner { width: 120px; height: 72px; background: var(--nn-accent-default); color: var(--nn-on-accent); border-radius: var(--nn-radius-md); display: grid; place-items: center; font-weight: 600; }
+    .state-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    .state-tile { position: relative; isolation: isolate; height: 72px; border-radius: var(--nn-radius-md); display: grid; place-items: center; font-weight: 600; overflow: hidden; }
+    .state-tile::after { content: ''; position: absolute; inset: 0; z-index: -1; background: currentColor; opacity: var(--_o, 0); }
+    .motion-row { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: center; padding: 10px 0; border-bottom: var(--nn-stroke-border) solid var(--nn-border-subtle); }
+    .motion-track { position: relative; height: 32px; background: var(--nn-bg-surface-3); border-radius: var(--nn-radius-pill); }
+    .motion-dot { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: var(--nn-radius-pill); background: var(--nn-accent-text); }
+    .motion-track.is-on .motion-dot { transform: translateX(calc(var(--_w) - 32px)); }
+    .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 12px; }
+    .icon-cell { display: grid; justify-items: center; gap: 8px; padding: 16px 8px; border-radius: var(--nn-radius-md); background: var(--nn-bg-surface-2); text-align: center; }
+    .icon-cell .material-symbols-rounded { font-size: 32px; }
+    .icon-cell--on .material-symbols-rounded { color: var(--nn-accent-text); font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 32; }
+    @media (max-width: 640px) { .type-row, .space-row, .motion-row { grid-template-columns: 1fr; gap: 6px; } }
+  </style>
+</head>
+<body>
+  <header class="ds-header">
+    <h1 class="ds-header__title">NamNam
+      <nav class="ds-header__nav" id="ds-nav" aria-label="Specimens"></nav>
+    </h1>
+    <div id="ds-toolbar"></div>
+  </header>
+
+  <main class="ds-main">
+    <section class="ds-section">
+      <h2>Color</h2>
+      <p class="ds-lead">Semantic roles only. Nền trung tính; accent cho hành động chính; status chỉ dùng cho bất thường (ISA-101). Code dùng tên vai trò, không bao giờ dùng primitive.</p>
+      <div class="ds-panel" id="colors"></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Contrast audit</h2>
+      <p class="ds-lead">Sinh tự động khi build token. Ngưỡng: chữ 4.5:1, UI và disabled 3:1.</p>
+      <div class="ds-panel"><table class="ds-table" id="audit"></table></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Typography</h2>
+      <p class="ds-lead">Thang tỉ lệ ~1.25, giá trị theo platform mode. Font hiện là placeholder (Inter), chưa chốt.</p>
+      <div class="ds-panel" id="type"></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Spacing</h2>
+      <p class="ds-lead">Lưới 4, bố cục dùng bội số 8.</p>
+      <div class="ds-panel" id="space"></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Radius</h2>
+      <p class="ds-lead">Thang cố định + luật đồng tâm: <strong>bo ngoài = bo trong + padding</strong>.</p>
+      <div class="ds-panel">
+        <div class="ds-grid radius-grid" id="radius"></div>
+        <p class="group-title" style="margin-top:28px">Nested radius</p>
+        <div class="nest"><div class="nest__inner">radius.md</div></div>
+        <p class="ds-note" id="nest-note"></p>
+      </div>
+    </section>
+
+    <section class="ds-section">
+      <h2>State layers</h2>
+      <p class="ds-lead">Lớp phủ màu nội dung với opacity cố định. Hover chỉ có trên web.</p>
+      <div class="ds-panel"><div class="ds-grid state-grid" id="states"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Motion</h2>
+      <p class="ds-lead">Tính cách "snappy". Bấm vào một hàng để chạy. Cột LVGL là path tương ứng trong header C.</p>
+      <div class="ds-panel" id="motion"></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Icons</h2>
+      <p class="ds-lead">Material Symbols Rounded. <strong>Outline = mặc định, Filled = đang bật/active.</strong> Bấm vào icon để chuyển trạng thái.</p>
+      <div class="ds-panel"><div class="icon-grid" id="icons"></div></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    const { el } = DS;
+    const COLOR_GROUPS = ['bg', 'text', 'border', 'accent', 'on', 'status', 'focus'];
+    const ICONS = [
+      ['power_settings_new', 'power'], ['mode_fan', 'fan'], ['thermostat', 'thermostat'], ['ac_unit', 'cooling'],
+      ['lightbulb', 'light'], ['wifi', 'wifi'], ['wifi_off', 'wifi-off'], ['settings', 'settings'],
+      ['home', 'home'], ['arrow_back', 'back'], ['check_circle', 'success'], ['warning', 'warning'],
+      ['error', 'critical'], ['info', 'info'], ['cloud_off', 'cloud-off'], ['refresh', 'refresh'],
+    ];
+
+    function entries(prefix, type) {
+      return Object.entries(DS.tokens()).filter(([name, t]) => name.startsWith(prefix + '.') && (!type || t.type === type));
+    }
+
+    function renderColors() {
+      const host = document.getElementById('colors');
+      host.replaceChildren();
+      for (const group of COLOR_GROUPS) {
+        const items = entries(group, 'color');
+        if (!items.length) continue;
+        host.append(el('p', { class: 'group-title', text: group }));
+        const grid = el('div', { class: 'ds-grid swatches' });
+        for (const [name, t] of items) {
+          grid.append(el('div', { class: 'swatch' },
+            el('div', { class: 'swatch__chip', style: `background: var(${t.cssVar})` }),
+            el('div', { class: 'swatch__meta' },
+              el('div', { class: 'swatch__name', text: name }),
+              el('div', { class: 'ds-mono', text: `${t.css}  ·  ${t.cssVar}` }),
+              el('div', { class: 'ds-mono', text: t.c }))));
+        }
+        host.append(grid);
+      }
+    }
+
+    function renderAudit() {
+      const rows = DS.data.audit.filter((r) => r.theme === DS.theme());
+      document.getElementById('audit').replaceChildren(
+        el('thead', {}, el('tr', {}, ...['Kind', 'Foreground', 'Background', 'Ratio', 'Min', ''].map((h) => el('th', { text: h })))),
+        el('tbody', {}, ...rows.map((r) => el('tr', {},
+          el('td', { text: r.kind }),
+          el('td', { class: 'ds-mono', text: r.fg + (r.alpha ? ` @ ${r.alpha}` : '') }),
+          el('td', { class: 'ds-mono', text: r.bg }),
+          el('td', { text: r.ratio.toFixed(2) }),
+          el('td', { text: r.min }),
+          el('td', {}, el('span', { class: `ds-badge ds-badge--${r.pass ? 'pass' : 'fail'}`, text: r.pass ? 'PASS' : 'FAIL' }))))));
+    }
+
+    function renderType() {
+      const roles = [...new Set(entries('type').map(([name]) => name.split('.')[1]))];
+      const strong = new Set(['label', 'title', 'headline', 'display', 'hero']);
+      document.getElementById('type').replaceChildren(...roles.map((role) => {
+        const size = DS.token(`type.${role}.size`);
+        const lh = DS.token(`type.${role}.line-height`);
+        return el('div', { class: 'type-row' },
+          el('div', {}, el('div', { style: 'font-weight:600', text: role }), el('div', { class: 'ds-mono', text: `${size.css} / ${lh.css}` })),
+          el('div', {
+            style: `font-size: var(${size.cssVar}); line-height: var(${lh.cssVar}); font-weight: ${strong.has(role) ? 'var(--nn-font-weight-semibold)' : 'var(--nn-font-weight-regular)'}`,
+            text: role === 'hero' ? '26°C' : 'Điều hoà phòng họp · Nhiệt độ 26°C, quạt tự động',
+          }));
+      }));
+    }
+
+    function renderSpace() {
+      document.getElementById('space').replaceChildren(...entries('space').map(([name, t]) =>
+        el('div', { class: 'space-row' },
+          el('div', {}, el('div', { style: 'font-weight:600', text: name }), el('div', { class: 'ds-mono', text: t.css })),
+          el('div', {}, el('div', { class: 'space-bar', style: `width: var(${t.cssVar})` })))));
+    }
+
+    function renderRadius() {
+      document.getElementById('radius').replaceChildren(...entries('radius').map(([name, t]) =>
+        el('div', {},
+          el('div', { class: 'radius-box', style: `border-radius: var(${t.cssVar})`, text: name.split('.')[1] }),
+          el('div', { class: 'ds-mono', style: 'margin-top:6px', text: `${t.css} · ${t.c}` }))));
+      const outer = parseInt(DS.token('radius.lg').css, 10);
+      const pad = parseInt(DS.token('space.xs').css, 10);
+      const inner = parseInt(DS.token('radius.md').css, 10);
+      const ok = outer === inner + pad;
+      document.getElementById('nest-note').textContent =
+        `radius.lg (${outer}) = radius.md (${inner}) + space.xs (${pad}) → ${ok ? 'đồng tâm ✓' : 'LỆCH ✗'}`;
+    }
+
+    function renderStates() {
+      const tiles = [
+        ['default', 0], ['hover', 'var(--nn-opacity-state-hover)'], ['pressed', 'var(--nn-opacity-state-pressed)'],
+      ];
+      const surfaces = [
+        ['accent.default', 'on.accent'], ['bg.surface-3', 'text.primary'],
+      ];
+      const host = document.getElementById('states');
+      host.replaceChildren();
+      for (const [bg, fg] of surfaces) {
+        for (const [label, opacity] of tiles) {
+          const isHover = label === 'hover';
+          host.append(el('div', {},
+            el('div', {
+              class: 'state-tile',
+              style: `background: var(${DS.token(bg).cssVar}); color: var(${DS.token(fg).cssVar}); --_o: ${opacity}; ${isHover && DS.isTouch() ? 'opacity:.35' : ''}`,
+              text: label,
+            }),
+            el('div', { class: 'ds-mono', style: 'margin-top:6px', text: `${bg}${isHover && DS.isTouch() ? ' · n/a on touch' : ''}` })));
+        }
+      }
+    }
+
+    function renderMotion() {
+      const durations = entries('motion.duration');
+      const easings = entries('motion.easing');
+      const host = document.getElementById('motion');
+      host.replaceChildren();
+      for (const [dName, d] of durations) {
+        const easing = dName.endsWith('exit') ? DS.token('motion.easing.exit') : DS.token('motion.easing.standard');
+        const easingName = dName.endsWith('exit') ? 'motion.easing.exit' : 'motion.easing.standard';
+        const track = el('div', { class: 'motion-track' }, el('div', {
+          class: 'motion-dot',
+          style: `transition: transform var(${d.cssVar}) var(${easing.cssVar})`,
+        }));
+        const row = el('div', { class: 'motion-row', role: 'button', tabindex: '0', style: 'cursor:pointer' },
+          el('div', {}, el('div', { style: 'font-weight:600', text: `${dName.split('.').pop()} · ${d.css}` }),
+            el('div', { class: 'ds-mono', text: `${easingName.split('.').pop()} → ${DS.data.combos[`${DS.theme()}/embedded-7in`][easingName].c}` })),
+          track);
+        const play = () => {
+          track.style.setProperty('--_w', `${track.clientWidth}px`);
+          track.classList.toggle('is-on');
+        };
+        row.addEventListener('click', play);
+        row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); } });
+        host.append(row);
+      }
+      host.append(el('p', { class: 'ds-note', text: `Easings: ${easings.map(([n, t]) => `${n.split('.').pop()} = ${t.css}`).join('  ·  ')}` }));
+    }
+
+    function renderIcons() {
+      document.getElementById('icons').replaceChildren(...ICONS.map(([glyph, label]) => {
+        const cell = el('button', { type: 'button', class: 'icon-cell', style: 'border:0;color:inherit;font:inherit;cursor:pointer', 'aria-pressed': 'false' },
+          el('span', { class: 'material-symbols-rounded', 'aria-hidden': 'true', text: glyph }),
+          el('span', { class: 'ds-mono', text: label }));
+        cell.addEventListener('click', () => {
+          const on = cell.classList.toggle('icon-cell--on');
+          cell.setAttribute('aria-pressed', String(on));
+        });
+        return cell;
+      }));
+    }
+
+    function render() {
+      renderColors(); renderAudit(); renderType(); renderSpace(); renderRadius(); renderStates(); renderMotion(); renderIcons();
+    }
+    DS.onChange(render);
+    render();
+  })();
+  </script>
+</body>
+</html>

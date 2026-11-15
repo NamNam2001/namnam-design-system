@@ -1,0 +1,64 @@
+{
+  "$description": "Semantic tokens shared by every theme and platform (playbook §5, §10).",
+  "space": {
+    "$type": "dimension",
+    "none": { "$value": "0px" },
+    "2xs":  { "$value": "4px" },
+    "xs":   { "$value": "8px" },
+    "sm":   { "$value": "12px" },
+    "md":   { "$value": "16px" },
+    "lg":   { "$value": "24px" },
+    "xl":   { "$value": "32px" },
+    "2xl":  { "$value": "48px" },
+    "3xl":  { "$value": "64px" }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm":   { "$value": "8px" },
+    "md":   { "$value": "12px" },
+    "lg":   { "$value": "20px" },
+    "pill": { "$value": "9999px", "$description": "Exported to LVGL as LV_RADIUS_CIRCLE." }
+  },
+  "stroke": {
+    "$type": "dimension",
+    "border":       { "$value": "1px" },
+    "focus":        { "$value": "2px" },
+    "focus-offset": { "$value": "2px" },
+    "icon":         { "$value": "2px" }
+  },
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "$value": ["Inter", "sans-serif"],
+      "$description": "PLACEHOLDER: final font still open (playbook §18 Q5). Must cover Vietnamese and allow commercial embedding."
+    },
+    "weight": {
+      "$type": "fontWeight",
+      "regular":  { "$value": 400 },
+      "medium":   { "$value": 500 },
+      "semibold": { "$value": 600 }
+    }
+  },
+  "opacity": {
+    "$type": "number",
+    "state": {
+      "hover":   { "$value": 0.08, "$description": "State layer, web only (no hover on touch)." },
+      "pressed": { "$value": 0.12, "$description": "State layer drawn in the component's content color." }
+    }
+  },
+  "motion": {
+    "duration": {
+      "$type": "duration",
+      "micro":    { "$value": "100ms" },
+      "exit":     { "$value": "150ms" },
+      "enter":    { "$value": "200ms" },
+      "emphasis": { "$value": "300ms" }
+    },
+    "easing": {
+      "$type": "cubicBezier",
+      "standard": { "$value": [0.2, 0.8, 0.2, 1], "$extensions": { "lvgl": { "path": "lv_anim_path_ease_out" } } },
+      "exit":     { "$value": [0.4, 0, 1, 1],     "$extensions": { "lvgl": { "path": "lv_anim_path_ease_in" } } },
+      "linear":   { "$value": [0, 0, 1, 1],       "$extensions": { "lvgl": { "path": "lv_anim_path_linear" } } }
+    }
+  }
+}

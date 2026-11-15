@@ -1,0 +1,49 @@
+{
+  "$description": "Semantic color roles, light theme (bright rooms / outdoors). Same names as dark.json; only the mapping changes.",
+  "bg": {
+    "$type": "color",
+    "canvas":    { "$value": "{color.gray.100}" },
+    "surface-1": { "$value": "{color.white}" },
+    "surface-2": { "$value": "{color.gray.50}" },
+    "surface-3": { "$value": "{color.gray.100}" }
+  },
+  "text": {
+    "$type": "color",
+    "primary":   { "$value": "{color.gray.900}" },
+    "secondary": { "$value": "{color.gray.600}" }
+  },
+  "border": {
+    "$type": "color",
+    "subtle":  { "$value": "{color.gray.200}" },
+    "default": { "$value": "{color.gray.300}" },
+    "strong":  { "$value": "{color.gray.500}" }
+  },
+  "accent": {
+    "$type": "color",
+    "default": { "$value": "{color.blue.600}" },
+    "text":    { "$value": "{color.blue.700}" }
+  },
+  "on": {
+    "$type": "color",
+    "accent":   { "$value": "{color.white}" },
+    "critical": { "$value": "{color.white}" }
+  },
+  "status": {
+    "$type": "color",
+    "success":         { "$value": "{color.green.600}" },
+    "warning":         { "$value": "{color.amber.600}" },
+    "critical":        { "$value": "{color.red.600}" },
+    "critical-strong": { "$value": "{color.red.600}" },
+    "info":            { "$value": "{color.cyan.600}" }
+  },
+  "focus": {
+    "$type": "color",
+    "ring": { "$value": "{color.blue.600}" }
+  },
+  "opacity": {
+    "$type": "number",
+    "state": {
+      "disabled": { "$value": 0.5, "$description": "Higher than dark (0.38): at 0.38 dark text on a light surface drops below 3:1." }
+    }
+  }
+}

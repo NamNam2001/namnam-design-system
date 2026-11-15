@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slider · NamNam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+  <link rel="stylesheet" href="../../build/web/tokens.css">
+  <link rel="stylesheet" href="specimen.css">
+  <link rel="stylesheet" href="components/button.css">
+  <link rel="stylesheet" href="components/slider.css">
+  <link rel="stylesheet" href="components/list-item.css">
+  <script src="../../build/web/tokens.js"></script>
+  <script src="specimen.js"></script>
+  <script src="components/widgets.js"></script>
+  <style>
+    .field { display: grid; gap: var(--nn-space-2xs); min-width: 0; }
+    .field__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--nn-space-md); }
+    .field__label { font-size: var(--nn-slider-label-size); color: var(--nn-text-secondary); }
+    .field__value { font-size: var(--nn-slider-value-size); font-weight: var(--nn-font-weight-semibold); font-variant-numeric: tabular-nums; }
+    .slider-matrix td { min-width: 220px; }
+    .gallery { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    .tile { padding: var(--nn-space-lg); border-radius: var(--nn-radius-lg); background: var(--nn-bg-surface-2); }
+    .tile__caption { margin: 0 0 12px; color: var(--nn-text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+    .surface { padding: var(--nn-space-lg); border: var(--nn-stroke-border) solid var(--nn-border-subtle); border-radius: var(--nn-radius-lg); background: var(--nn-bg-surface-1); }
+    .thermo { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--nn-space-lg); height: 100%; }
+    .thermo__side { display: grid; gap: var(--nn-space-lg); align-content: start; }
+  </style>
+</head>
+<body>
+  <header class="ds-header">
+    <h1 class="ds-header__title">NamNam <nav class="ds-header__nav" id="ds-nav" aria-label="Specimens"></nav></h1>
+    <div id="ds-toolbar"></div>
+  </header>
+
+  <main class="ds-main">
+    <section class="ds-section">
+      <h2>Slider <span class="ds-mono">· widget · BEM block <code>slider</code> · role=slider</span></h2>
+      <p class="ds-lead">Giá trị liên tục (độ sáng, tốc độ quạt). Vạch mảnh dưới track là <strong>vùng bình thường</strong> (ISA-101: giá trị luôn kèm ngữ cảnh). Kéo, chạm, hoặc dùng phím mũi tên.</p>
+      <div class="ds-panel"><table class="ds-matrix slider-matrix" id="matrix"></table></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Slider · interactive</h2>
+      <div class="ds-panel"><div class="gallery" id="sliders"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Setpoint <span class="ds-mono">· widget · BEM block <code>setpoint</code></span></h2>
+      <p class="ds-lead">Giá trị đặt (nhiệt độ). Nút −/+ đổi giá trị mong muốn ngay; ngừng bấm 0,6s thì gửi một lệnh. Dòng dưới luôn cho biết <strong>giá trị thật hiện tại</strong> và vùng bình thường.</p>
+      <div class="ds-panel"><div class="gallery" id="setpoint-states"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Setpoint · statechart</h2>
+      <div class="ds-panel">
+        <div class="ds-controls"><span>Kết quả mô phỏng:</span><span id="outcome"></span></div>
+        <div style="max-width: 420px" class="surface" id="setpoint-live"></div>
+      </div>
+    </section>
+
+    <section class="ds-section" id="frame-section">
+      <h2>In context · 7" 1024×600 @1x</h2>
+      <div class="ds-frame-wrap"><div class="ds-frame" id="frame"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Tokens</h2>
+      <div class="ds-panel" id="tokens"></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    const { el } = DS;
+    const STATES = ['default', 'hover', 'pressed', 'focused', 'disabled'];
+    let outcome = 'ack';
+
+    function field(label, sliderProps, format) {
+      const out = el('span', { class: 'field__value' });
+      const s = NN.slider({ ...sliderProps, label, onInput: (v) => { out.textContent = format(v); } });
+      out.textContent = format(s.getValue());
+      return el('div', { class: 'field' }, el('div', { class: 'field__head' }, el('span', { class: 'field__label', text: label }), out), s);
+    }
+
+    function renderMatrix() {
+      const touch = DS.isTouch();
+      document.getElementById('matrix').replaceChildren(
+        el('thead', {}, el('tr', {}, el('th', { text: '' }), ...STATES.map((s) => el('th', { text: s })))),
+        el('tbody', {}, el('tr', {},
+          el('th', { scope: 'row', text: 'normal 40–80' }),
+          ...STATES.map((state) => {
+            const na = state === 'hover' && touch;
+            const props = { value: 62, normal: [40, 80], state, label: state, unit: '%' };
+            // hover cannot be forced on a slider via attribute; show default look with a note
+            return el('td', { class: na ? 'is-na' : null }, NN.slider(props),
+              na ? el('span', { class: 'ds-na', text: 'không có trên cảm ứng' }) : state === 'hover' ? el('span', { class: 'ds-na', text: 'rê chuột để xem' }) : '');
+          }))));
+    }
+
+    function renderSliders() {
+      document.getElementById('sliders').replaceChildren(
+        el('div', { class: 'tile' }, field('Độ sáng', { min: 0, max: 100, value: 70, unit: '%' }, (v) => `${v}%`)),
+        el('div', { class: 'tile' }, field('Tốc độ quạt', { min: 1, max: 5, step: 1, value: 3, normal: [2, 4] }, (v) => `Mức ${v}`)),
+        el('div', { class: 'tile' }, field('Độ ẩm mục tiêu', { min: 30, max: 80, step: 5, value: 55, normal: [40, 60], unit: '%' }, (v) => `${v}%`)),
+      );
+    }
+
+    function renderSetpointStates() {
+      const base = { label: 'Nhiệt độ cài đặt', value: 24, min: 16, max: 30, unit: '°C', current: 26, normal: [22, 26] };
+      document.getElementById('setpoint-states').replaceChildren(...[
+        ['default', 'default'], ['pending', 'pending'], ['error', 'error'], ['disabled', 'offline'],
+      ].map(([state, caption]) => el('div', { class: 'tile' },
+        el('p', { class: 'tile__caption', text: caption }),
+        NN.setpoint({ ...base, state }))));
+    }
+
+    function renderLive() {
+      let reported = 26;
+      let drift = null;
+      const sp = NN.setpoint({
+        label: 'Nhiệt độ cài đặt', value: 24, min: 16, max: 30, unit: '°C', current: reported, normal: [22, 26],
+        onCommit: (desired, root) => {
+          const previous = root.dataset.applied ? Number(root.dataset.applied) : 24;
+          root.setPending(true);
+          root.setMeta('Đang gửi tới thiết bị…');
+          NN.command(outcome)
+            .then(() => {
+              root.dataset.applied = desired;
+              root.setPending(false);
+              root.setCurrent(reported);
+              clearInterval(drift);
+              // the room slowly follows the new setpoint (reported value changes, desired does not)
+              drift = setInterval(() => {
+                if (Math.abs(reported - desired) < 0.25) { clearInterval(drift); return; }
+                reported = Math.round((reported + Math.sign(desired - reported) * 0.5) * 10) / 10;
+                root.setCurrent(reported);
+              }, 1200);
+            })
+            .catch((reason) => {
+              root.setPending(false);
+              root.setValue(previous);
+              root.setError(reason === 'timeout' ? 'Thiết bị không phản hồi · đã giữ giá trị cũ' : 'Lệnh bị từ chối · đã giữ giá trị cũ');
+            });
+        },
+      });
+      document.getElementById('setpoint-live').replaceChildren(sp);
+    }
+
+    function renderFrame() {
+      const section = document.getElementById('frame-section');
+      section.hidden = DS.platform() !== 'embedded-7in';
+      if (section.hidden) return;
+      const sp = NN.setpoint({ label: 'Nhiệt độ cài đặt', value: 24, min: 16, max: 30, unit: '°C', current: 26, normal: [22, 26] });
+      document.getElementById('frame').replaceChildren(
+        el('div', { class: 'ds-frame__bar' },
+          el('span', { text: '09:41 · Phòng họp A · Điều hoà' }),
+          el('span', { class: 'material-symbols-rounded', 'aria-hidden': 'true', text: 'wifi' })),
+        el('div', { class: 'ds-frame__body' },
+          el('div', { class: 'thermo' },
+            el('div', { class: 'surface', style: 'display:grid; align-content:center' }, sp),
+            el('div', { class: 'thermo__side' },
+              el('div', { class: 'surface' }, field('Tốc độ quạt', { min: 1, max: 5, step: 1, value: 3, normal: [2, 4] }, (v) => `Mức ${v}`)),
+              NN.list({ items: [
+                NN.listItem({ icon: 'ac_unit', title: 'Chế độ', trailing: 'Làm mát', interactive: true }),
+                NN.listItem({ icon: 'schedule', title: 'Hẹn giờ tắt', trailing: '18:00', interactive: true }),
+              ] })))));
+    }
+
+    document.getElementById('outcome').replaceWith(NN.choice('outcome',
+      [['ack', 'Thành công'], ['error', 'Lỗi'], ['timeout', 'Hết thời gian']], outcome, (v) => { outcome = v; }));
+
+    function render() {
+      renderMatrix();
+      renderFrame();
+      document.getElementById('tokens').replaceChildren(DS.tokenTable('slider', 'setpoint'));
+    }
+    DS.onChange(render);
+    render();
+    renderSliders();
+    renderSetpointStates();
+    renderLive();
+  })();
+  </script>
+</body>
+</html>

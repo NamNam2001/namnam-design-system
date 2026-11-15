@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>List item · NamNam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+  <link rel="stylesheet" href="../../build/web/tokens.css">
+  <link rel="stylesheet" href="specimen.css">
+  <link rel="stylesheet" href="components/toggle.css">
+  <link rel="stylesheet" href="components/list-item.css">
+  <script src="../../build/web/tokens.js"></script>
+  <script src="specimen.js"></script>
+  <script src="components/widgets.js"></script>
+  <style>
+    .lists { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); align-items: start; }
+    .signal { display: inline-flex; align-items: center; gap: var(--nn-space-2xs); }
+  </style>
+</head>
+<body>
+  <header class="ds-header">
+    <h1 class="ds-header__title">NamNam <nav class="ds-header__nav" id="ds-nav" aria-label="Specimens"></nav></h1>
+    <div id="ds-toolbar"></div>
+  </header>
+
+  <main class="ds-main">
+    <section class="ds-section">
+      <h2>List item <span class="ds-mono">· widget · BEM blocks <code>list</code>, <code>list-item</code></span></h2>
+      <p class="ds-lead">Một hàng = <strong>một</strong> mục tiêu chạm. Hàng <code>--interactive</code> là cả nút (có chevron). Hàng có toggle thì hàng không bấm được, chỉ toggle bấm được. Hàng chỉ đọc không có phản hồi chạm.</p>
+      <div class="ds-panel" style="max-width: 640px" id="states"></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Patterns</h2>
+      <div class="ds-panel"><div class="lists" id="patterns"></div></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Edge cases</h2>
+      <p class="ds-lead">Chữ dài cắt bằng dấu "…", giá trị bên phải không bao giờ bị đẩy mất.</p>
+      <div class="ds-panel" style="max-width: 520px" id="edge"></div>
+    </section>
+
+    <section class="ds-section">
+      <h2>Tokens</h2>
+      <div class="ds-panel" id="tokens"></div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    const { el } = DS;
+
+    function renderStates() {
+      const touch = DS.isTouch();
+      const states = ['default', 'hover', 'pressed', 'focused', 'disabled'];
+      document.getElementById('states').replaceChildren(NN.list({
+        header: 'nn-list-item--interactive × state',
+        items: states.map((state) => {
+          const na = state === 'hover' && touch;
+          const item = NN.listItem({
+            icon: 'ac_unit',
+            title: 'Chế độ vận hành',
+            subtitle: na ? 'hover · không có trên cảm ứng' : state,
+            trailing: 'Tự động',
+            interactive: true,
+            disabled: state === 'disabled',
+            state,
+          });
+          if (na) item.style.opacity = '.35';
+          return item;
+        }),
+      }));
+    }
+
+    function renderPatterns() {
+      const settings = NN.list({ header: 'Cài đặt', items: [
+        NN.listItem({ icon: 'wifi', title: 'Wi-Fi', subtitle: 'Office-5G', trailing: 'Đã kết nối', interactive: true }),
+        NN.listItem({ icon: 'brightness_6', title: 'Độ sáng màn hình', trailing: '70%', interactive: true }),
+        NN.listItem({ icon: 'language', title: 'Ngôn ngữ', trailing: 'Tiếng Việt', interactive: true }),
+        NN.listItem({ icon: 'system_update', title: 'Cập nhật phần mềm', subtitle: 'Không thể kiểm tra khi mất mạng', interactive: true, disabled: true }),
+      ] });
+
+      const devices = NN.list({ header: 'Thiết bị · Phòng họp A', items: [
+        NN.listItem({ icon: 'lightbulb', title: 'Đèn trần', subtitle: 'Đang bật', trailing: NN.toggle({ checked: true, label: 'Đèn trần' }) }),
+        NN.listItem({ icon: 'mode_fan', title: 'Quạt hút', subtitle: 'Đã tắt', trailing: NN.toggle({ checked: false, label: 'Quạt hút' }) }),
+        NN.listItem({ icon: 'power', title: 'Ổ cắm thông minh', subtitle: 'Mất kết nối · 5 phút trước', trailing: NN.toggle({ checked: false, label: 'Ổ cắm', state: 'disabled' }) }),
+      ] });
+
+      const info = NN.list({ header: 'Thông tin thiết bị', items: [
+        NN.listItem({ icon: 'memory', title: 'Firmware', trailing: '1.4.2' }),
+        NN.listItem({ icon: 'lan', title: 'Địa chỉ IP', trailing: '192.168.1.42' }),
+        NN.listItem({ icon: 'network_wifi_3_bar', title: 'Tín hiệu Wi-Fi', trailing: el('span', { class: 'signal' }, '−58 dBm') }),
+        NN.listItem({ icon: 'schedule', title: 'Thời gian hoạt động', trailing: '12 ngày 4 giờ' }),
+      ] });
+
+      document.getElementById('patterns').replaceChildren(settings, devices, info);
+    }
+
+    function renderEdge() {
+      document.getElementById('edge').replaceChildren(NN.list({ items: [
+        NN.listItem({ icon: 'ac_unit', title: 'Điều hoà phòng họp lớn tầng 3 khu B (phía cửa sổ)', subtitle: 'Đang làm mát · quạt tự động · lịch làm việc giờ hành chính', trailing: '24,5°C', interactive: true }),
+        NN.listItem({ icon: 'thermostat', title: 'Cảm biến', subtitle: '', trailing: '—' }),
+      ] }));
+    }
+
+    function render() {
+      renderStates();
+      document.getElementById('tokens').replaceChildren(DS.tokenTable('list', 'list-item'));
+    }
+    DS.onChange(render);
+    render();
+    renderPatterns();
+    renderEdge();
+  })();
+  </script>
+</body>
+</html>

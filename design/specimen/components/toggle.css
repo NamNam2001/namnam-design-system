@@ -1,0 +1,138 @@
+/*
+ * Toggle widget (BEM block: toggle). <button role="switch" aria-checked>. Playbook §6.1, §6.2.
+ *   Elements: toggle__track, toggle__thumb
+ *   States (never in class names): aria-checked (on/off), aria-busy="true" (pending command),
+ *   :disabled, :active (pressed), :focus-visible, :hover (web only); data-state forces a state in specimens.
+ * The button itself is the hit area (>= control.height.md); the visible track is smaller.
+ */
+.nn-toggle {
+  --_track: var(--nn-toggle-off-track-bg);
+  --_border: var(--nn-toggle-off-track-border);
+  --_thumb: var(--nn-toggle-off-thumb);
+  --_travel: calc(var(--nn-toggle-width) - var(--nn-toggle-height));
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--nn-toggle-hit-area);
+  min-height: var(--nn-toggle-hit-area);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--_thumb);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nn-toggle[aria-checked='true'] {
+  --_track: var(--nn-toggle-on-track-bg);
+  --_border: var(--nn-toggle-on-track-border);
+  --_thumb: var(--nn-toggle-on-thumb);
+}
+
+.nn-toggle__track {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: var(--nn-toggle-width);
+  height: var(--nn-toggle-height);
+  border: var(--nn-stroke-border) solid var(--_border);
+  border-radius: var(--nn-toggle-radius);
+  background: var(--_track);
+  transition:
+    background-color var(--nn-toggle-duration) var(--nn-toggle-easing),
+    border-color var(--nn-toggle-duration) var(--nn-toggle-easing);
+}
+
+/* State layer on the track, in the thumb color. */
+.nn-toggle__track::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--_thumb);
+  opacity: 0;
+  transition: opacity var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+.nn-toggle__thumb {
+  position: absolute;
+  top: 50%;
+  left: calc((var(--nn-toggle-height) - var(--nn-toggle-thumb-size)) / 2 - var(--nn-stroke-border));
+  width: var(--nn-toggle-thumb-size);
+  height: var(--nn-toggle-thumb-size);
+  border-radius: var(--nn-toggle-radius);
+  background: var(--_thumb);
+  transform: translate(0, -50%);
+  transition:
+    transform var(--nn-toggle-duration) var(--nn-toggle-easing),
+    background-color var(--nn-toggle-duration) var(--nn-toggle-easing);
+}
+
+.nn-toggle[aria-checked='true'] .nn-toggle__thumb {
+  transform: translate(var(--_travel), -50%);
+}
+
+/* Pending: thumb already at the desired side, spinner ring inside it. */
+.nn-toggle__thumb::after {
+  content: '';
+  position: absolute;
+  inset: 22%;
+  border: var(--nn-stroke-focus) solid var(--_track);
+  border-right-color: transparent;
+  border-radius: var(--nn-toggle-radius);
+  opacity: 0;
+}
+
+.nn-toggle[aria-busy='true'] {
+  cursor: progress;
+}
+
+.nn-toggle[aria-busy='true'] .nn-toggle__thumb::after {
+  opacity: 1;
+  animation: nn-spin 800ms linear infinite;
+}
+
+:root[data-platform='web'] .nn-toggle:hover:not(:disabled) .nn-toggle__track::after,
+.nn-toggle[data-state='hover'] .nn-toggle__track::after {
+  opacity: var(--nn-opacity-state-hover);
+}
+
+.nn-toggle:active:not(:disabled) .nn-toggle__track::after,
+.nn-toggle[data-state='pressed'] .nn-toggle__track::after {
+  opacity: var(--nn-opacity-state-pressed);
+}
+
+.nn-toggle:focus-visible,
+.nn-toggle[data-state='focused'] {
+  outline: none;
+}
+
+.nn-toggle:focus-visible .nn-toggle__track,
+.nn-toggle[data-state='focused'] .nn-toggle__track {
+  outline: var(--nn-stroke-focus) solid var(--nn-focus-ring);
+  outline-offset: var(--nn-stroke-focus-offset);
+}
+
+.nn-toggle:disabled {
+  cursor: not-allowed;
+}
+
+.nn-toggle:disabled .nn-toggle__track {
+  opacity: var(--nn-toggle-disabled-opacity);
+}
+
+@keyframes nn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nn-toggle__track,
+  .nn-toggle__thumb {
+    transition: none;
+  }
+}

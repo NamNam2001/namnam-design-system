@@ -1,0 +1,177 @@
+/*
+ * DeviceCard widget (BEM block: device-card). Playbook §8.3, ISA-101.
+ *   Elements:  device-card__header, device-card__icon, device-card__control, device-card__title,
+ *              device-card__value, device-card__unit, device-card__status
+ *   Modifiers: device-card--compact ; device-card--interactive (whole card is one tap target, no inner control)
+ *   States (never in class names):
+ *     data-status = ok | warning | critical | info | offline  (reported device health)
+ *     data-active = true | false                               (reported on/off; icon filled when on)
+ *     aria-busy   = true                                       (command pending)
+ *   Abnormal = status row + icon change only. The card itself never changes color.
+ */
+.nn-device-card {
+  --_dot: var(--nn-device-card-status-ok);
+  --_icon-size: var(--nn-device-card-icon-size);
+  --_value-size: var(--nn-device-card-value-size);
+  --_value-line: var(--nn-device-card-value-line);
+  --_pad: var(--nn-device-card-padding);
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-content: start;
+  gap: var(--nn-device-card-gap);
+  min-width: 0;
+  padding: var(--_pad);
+  border: var(--nn-stroke-border) solid var(--nn-device-card-border);
+  border-radius: var(--nn-device-card-radius);
+  background: var(--nn-device-card-bg);
+  color: var(--nn-text-primary);
+  font-family: var(--nn-font-family);
+  text-align: left;
+}
+
+.nn-device-card--compact {
+  --_icon-size: var(--nn-device-card-compact-icon-size);
+  --_value-size: var(--nn-device-card-compact-value-size);
+  --_value-line: var(--nn-device-card-compact-value-line);
+  --_pad: var(--nn-device-card-compact-padding);
+}
+
+.nn-device-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nn-device-card-gap);
+  min-height: var(--_icon-size);
+}
+
+.nn-device-card__icon {
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  color: var(--nn-device-card-icon-off);
+  font-size: var(--_icon-size);
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 32;
+  transition: color var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+.nn-device-card[data-active='true'] .nn-device-card__icon {
+  color: var(--nn-device-card-icon-on);
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 32;
+}
+
+/*
+ * Toggle in the header: the visible track stays inside the padding box.
+ * Only the hit area's surplus (hit-area minus track size) is allowed to spill out, so it doesn't inflate the header.
+ */
+.nn-device-card__control {
+  margin-block: calc((var(--_icon-size) - var(--nn-toggle-hit-area)) / 2);
+  margin-inline-end: calc((var(--nn-toggle-width) - var(--nn-toggle-hit-area)) / 2);
+}
+
+.nn-device-card__title {
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--nn-device-card-title-size);
+  line-height: var(--nn-device-card-title-line);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nn-device-card__value {
+  margin: 0;
+  font-size: var(--_value-size);
+  font-weight: var(--nn-font-weight-semibold);
+  line-height: var(--_value-line);
+  font-variant-numeric: tabular-nums;
+}
+
+.nn-device-card__unit {
+  /* smaller inline text must not grow the value's line box */
+  line-height: 1;
+  margin-left: var(--nn-space-2xs);
+  color: var(--nn-device-card-meta-fg);
+  font-size: var(--nn-device-card-unit-size);
+  font-weight: var(--nn-font-weight-regular);
+}
+
+.nn-device-card__status {
+  display: flex;
+  align-items: center;
+  gap: var(--nn-space-xs);
+  margin: 0;
+  color: var(--nn-device-card-meta-fg);
+  font-size: var(--nn-device-card-meta-size);
+  line-height: var(--nn-device-card-meta-line);
+}
+
+.nn-device-card__status::before {
+  content: '';
+  flex: none;
+  width: var(--nn-device-card-dot-size);
+  height: var(--nn-device-card-dot-size);
+  border-radius: var(--nn-radius-pill);
+  background: var(--_dot);
+}
+
+.nn-device-card[data-status='warning'] { --_dot: var(--nn-device-card-status-warning); }
+.nn-device-card[data-status='critical'] { --_dot: var(--nn-device-card-status-critical); }
+.nn-device-card[data-status='info'] { --_dot: var(--nn-device-card-status-info); }
+.nn-device-card[data-status='offline'] { --_dot: var(--nn-device-card-status-offline); }
+
+/* Abnormal: status text takes the status color (icon + color + text, never color alone). */
+.nn-device-card[data-status='warning'] .nn-device-card__status { color: var(--nn-device-card-status-warning); }
+.nn-device-card[data-status='critical'] .nn-device-card__status { color: var(--nn-device-card-status-critical); }
+
+/* Offline: reported values are stale, show them as secondary. */
+.nn-device-card[data-status='offline'] .nn-device-card__value,
+.nn-device-card[data-status='offline'] .nn-device-card__icon {
+  color: var(--nn-device-card-meta-fg);
+}
+
+/* Pending command: spinner replaces the dot. */
+.nn-device-card[aria-busy='true'] .nn-device-card__status::before {
+  background: transparent;
+  border: var(--nn-stroke-focus) solid var(--nn-device-card-meta-fg);
+  border-right-color: transparent;
+  animation: nn-spin 800ms linear infinite;
+}
+
+/* ---- Modifier: interactive (whole card is a button) ---- */
+.nn-device-card--interactive {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nn-device-card--interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--nn-text-primary);
+  opacity: 0;
+  transition: opacity var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+:root[data-platform='web'] .nn-device-card--interactive:hover::after,
+.nn-device-card--interactive[data-state='hover']::after {
+  opacity: var(--nn-opacity-state-hover);
+}
+
+.nn-device-card--interactive:active::after,
+.nn-device-card--interactive[data-state='pressed']::after {
+  opacity: var(--nn-opacity-state-pressed);
+}
+
+.nn-device-card--interactive:focus-visible,
+.nn-device-card--interactive[data-state='focused'] {
+  outline: var(--nn-stroke-focus) solid var(--nn-focus-ring);
+  outline-offset: var(--nn-stroke-focus-offset);
+}
+
+@keyframes nn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$description": "Platform mode: web app (desktop/laptop, mouse + keyboard). Same token names as embedded; denser values.",
+  "type": {
+    "$type": "dimension",
+    "caption":  { "size": { "$value": "12px" }, "line-height": { "$value": "16px" } },
+    "body":     { "size": { "$value": "15px" }, "line-height": { "$value": "22px" } },
+    "label":    { "size": { "$value": "14px" }, "line-height": { "$value": "20px" } },
+    "title":    { "size": { "$value": "18px" }, "line-height": { "$value": "26px" } },
+    "headline": { "size": { "$value": "24px" }, "line-height": { "$value": "32px" } },
+    "display":  { "size": { "$value": "30px" }, "line-height": { "$value": "38px" } },
+    "hero":     { "size": { "$value": "40px" }, "line-height": { "$value": "48px" } }
+  },
+  "control": {
+    "$type": "dimension",
+    "height":    { "sm": { "$value": "32px" }, "md": { "$value": "40px" }, "lg": { "$value": "48px" } },
+    "padding-x": { "sm": { "$value": "12px" }, "md": { "$value": "16px" }, "lg": { "$value": "20px" } },
+    "icon-size": { "sm": { "$value": "16px" }, "md": { "$value": "20px" }, "lg": { "$value": "24px" } },
+    "gap":       { "$value": "8px" },
+    "switch-width":  { "$value": "40px" },
+    "switch-height": { "$value": "24px" },
+    "switch-thumb":  { "$value": "18px" },
+    "track-height":  { "$value": "4px" },
+    "thumb-size":    { "$value": "16px" },
+    "row-height":    { "$value": "48px" }
+  },
+  "icon": {
+    "$type": "dimension",
+    "size": { "md": { "$value": "20px" }, "lg": { "$value": "24px" }, "xl": { "$value": "32px" } }
+  },
+  "hit-area": {
+    "$type": "dimension",
+    "min": { "$value": "24px", "$description": "WCAG 2.2 target size minimum (pointer input)." }
+  }
+}

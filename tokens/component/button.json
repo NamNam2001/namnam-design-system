@@ -1,0 +1,20 @@
+{
+  "$description": "Component tokens for the Button widget (BEM block: button). Only references; no raw values.",
+  "component": {
+    "button": {
+      "radius":       { "$value": "{radius.md}" },
+      "border-width": { "$value": "{stroke.border}" },
+      "gap":          { "$value": "{control.gap}" },
+      "font-size":    { "$value": "{type.label.size}" },
+      "font-weight":  { "$value": "{font.weight.semibold}" },
+      "height":    { "sm": { "$value": "{control.height.sm}" },    "md": { "$value": "{control.height.md}" },    "lg": { "$value": "{control.height.lg}" } },
+      "padding-x": { "sm": { "$value": "{control.padding-x.sm}" }, "md": { "$value": "{control.padding-x.md}" }, "lg": { "$value": "{control.padding-x.lg}" } },
+      "icon-size": { "sm": { "$value": "{control.icon-size.sm}" }, "md": { "$value": "{control.icon-size.md}" }, "lg": { "$value": "{control.icon-size.lg}" } },
+      "primary":   { "bg": { "$value": "{accent.default}" },         "fg": { "$value": "{on.accent}" },    "border": { "$value": "{accent.default}" } },
+      "secondary": { "bg": { "$value": "{bg.surface-3}" },           "fg": { "$value": "{text.primary}" }, "border": { "$value": "{border.default}" } },
+      "ghost":     { "fg": { "$value": "{accent.text}" } },
+      "danger":    { "bg": { "$value": "{status.critical-strong}" }, "fg": { "$value": "{on.critical}" },  "border": { "$value": "{status.critical-strong}" } },
+      "disabled":  { "bg": { "$value": "{bg.surface-3}" },           "fg": { "$value": "{text.primary}" }, "opacity": { "$value": "{opacity.state.disabled}" } }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "$description": "Primitive tokens: raw brand values. Only semantic/component tokens may reference these; UI code never uses them directly.",
+  "color": {
+    "$type": "color",
+    "white": { "$value": "#FFFFFF" },
+    "gray": {
+      "50":  { "$value": "#F6F7F8" },
+      "100": { "$value": "#ECEEF0" },
+      "200": { "$value": "#D9DCE0" },
+      "300": { "$value": "#BCC1C7" },
+      "400": { "$value": "#959CA4" },
+      "500": { "$value": "#707780" },
+      "600": { "$value": "#535A62" },
+      "700": { "$value": "#3A4047" },
+      "800": { "$value": "#262B31" },
+      "850": { "$value": "#1D2126" },
+      "900": { "$value": "#15181C" },
+      "950": { "$value": "#0E1013" }
+    },
+    "blue": {
+      "300": { "$value": "#8CC4FF" },
+      "400": { "$value": "#5AA9FF" },
+      "500": { "$value": "#2F8BF5" },
+      "600": { "$value": "#1F6FD1" },
+      "700": { "$value": "#1A57A3" }
+    },
+    "green": {
+      "400": { "$value": "#3FCF8E" },
+      "600": { "$value": "#17945C" },
+      "700": { "$value": "#117349" }
+    },
+    "amber": {
+      "400": { "$value": "#FFC24D" },
+      "600": { "$value": "#B86E00" },
+      "700": { "$value": "#8F5600" }
+    },
+    "red": {
+      "400": { "$value": "#FF6B6B" },
+      "600": { "$value": "#C92A2A" },
+      "700": { "$value": "#A51F1F" }
+    },
+    "cyan": {
+      "400": { "$value": "#4CC9F0" },
+      "600": { "$value": "#0B7FA3" },
+      "700": { "$value": "#086480" }
+    }
+  }
+}

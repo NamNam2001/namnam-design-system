@@ -1,0 +1,175 @@
+/*
+ * Button widget (BEM block: button). Playbook §6.1, §8.2, §11.
+ *   Elements:  button__icon, button__label, button__spinner
+ *   Modifiers: button--primary | --secondary | --ghost | --danger ; button--sm | --lg (md is default)
+ *   States are NOT in class names: :disabled, aria-busy="true" (loading), :active (pressed),
+ *   :focus-visible, :hover (web only). data-state="hover|pressed|focused" forces a state for specimens.
+ * Only token custom properties are used; no raw colors or sizes.
+ */
+.nn-button {
+  --_bg: var(--nn-button-primary-bg);
+  --_fg: var(--nn-button-primary-fg);
+  --_border: var(--nn-button-primary-border);
+  --_height: var(--nn-button-height-md);
+  --_pad: var(--nn-button-padding-x-md);
+  --_icon: var(--nn-button-icon-size-md);
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nn-button-gap);
+  min-width: var(--_height);
+  height: var(--_height);
+  padding: 0 var(--_pad);
+  overflow: hidden;
+  border: var(--nn-button-border-width) solid var(--_border);
+  border-radius: var(--nn-button-radius);
+  background: var(--_bg);
+  color: var(--_fg);
+  font-family: var(--nn-font-family);
+  font-size: var(--nn-button-font-size);
+  font-weight: var(--nn-button-font-weight);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+/* State layer: content color at a fixed opacity (Material-style). */
+.nn-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
+}
+
+/* ---- Modifiers: variant ---- */
+.nn-button--secondary {
+  --_bg: var(--nn-button-secondary-bg);
+  --_fg: var(--nn-button-secondary-fg);
+  --_border: var(--nn-button-secondary-border);
+}
+
+.nn-button--ghost {
+  --_bg: transparent;
+  --_fg: var(--nn-button-ghost-fg);
+  --_border: transparent;
+}
+
+.nn-button--danger {
+  --_bg: var(--nn-button-danger-bg);
+  --_fg: var(--nn-button-danger-fg);
+  --_border: var(--nn-button-danger-border);
+}
+
+/* ---- Modifiers: size ---- */
+.nn-button--sm {
+  --_height: var(--nn-button-height-sm);
+  --_pad: var(--nn-button-padding-x-sm);
+  --_icon: var(--nn-button-icon-size-sm);
+}
+
+.nn-button--lg {
+  --_height: var(--nn-button-height-lg);
+  --_pad: var(--nn-button-padding-x-lg);
+  --_icon: var(--nn-button-icon-size-lg);
+}
+
+/* ---- Modifier: icon-only (square; aria-label is mandatory) ---- */
+.nn-button--icon {
+  width: var(--_height);
+  padding: 0;
+}
+
+/* ---- Elements ---- */
+.nn-button__icon {
+  width: var(--_icon);
+  height: var(--_icon);
+  font-size: var(--_icon);
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.nn-button__spinner {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: var(--_icon);
+  height: var(--_icon);
+  margin: auto;
+  border: var(--nn-stroke-icon) solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--nn-radius-pill);
+  animation: nn-spin 800ms linear infinite;
+}
+
+/* ---- States ---- */
+:root[data-platform='web'] .nn-button:hover:not(:disabled)::after,
+.nn-button[data-state='hover']::after {
+  opacity: var(--nn-opacity-state-hover);
+}
+
+.nn-button:active:not(:disabled)::after,
+.nn-button[data-state='pressed']::after {
+  opacity: var(--nn-opacity-state-pressed);
+}
+
+.nn-button:focus-visible,
+.nn-button[data-state='focused'] {
+  outline: var(--nn-stroke-focus) solid var(--nn-focus-ring);
+  outline-offset: var(--nn-stroke-focus-offset);
+}
+
+.nn-button:disabled {
+  --_bg: var(--nn-button-disabled-bg);
+  --_fg: var(--nn-button-disabled-fg);
+  --_border: var(--nn-button-disabled-bg);
+  cursor: not-allowed;
+}
+
+.nn-button--ghost:disabled {
+  --_bg: transparent;
+  --_border: transparent;
+}
+
+.nn-button:disabled > * {
+  opacity: var(--nn-button-disabled-opacity);
+}
+
+/* Loading keeps the measured width: content is hidden, not removed. */
+.nn-button[aria-busy='true'] {
+  cursor: progress;
+}
+
+.nn-button[aria-busy='true'] .nn-button__icon,
+.nn-button[aria-busy='true'] .nn-button__label {
+  visibility: hidden;
+}
+
+.nn-button[aria-busy='true'] .nn-button__spinner {
+  display: block;
+}
+
+@keyframes nn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nn-button,
+  .nn-button::after {
+    transition: none;
+  }
+
+  .nn-button__spinner {
+    animation-duration: 2s;
+  }
+}
