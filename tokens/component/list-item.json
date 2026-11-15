@@ -6,6 +6,7 @@
       "border":       { "$value": "{border.subtle}" },
       "radius":       { "$value": "{radius.lg}" },
       "header-size":  { "$value": "{type.caption.size}" },
+      "header-padding-x": { "$value": "{space.md}" },
       "header-fg":    { "$value": "{text.secondary}" }
     },
     "list-item": {

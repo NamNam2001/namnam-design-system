@@ -49,7 +49,7 @@ npm run verify          # check + test:browser; run before every commit
 5. **ISA-101 color rule**: abnormal states change only the status row/icon (dot + color + text), never a whole card. Never convey state by color alone.
 6. **Touch**: hit area ≥ `hit-area.min` / `control.height.md` for the platform; visible parts of a control never overflow their container's padding box (only the hit-area surplus may spill into padding, computed from tokens). Smaller inline text (units, badges) must not grow its line box.
 7. **Embedded-first**: flat surfaces + 1px borders; no blur, glass or large shadows (they don't run on the MCU and the web must match).
-8. **Contrast and lint**: `npm run verify` must pass. New status/indicator colors → add a pair to `AUDIT` in `build.mjs`.
+8. **Contrast and lint**: `npm run verify` must pass. Contrast is audited as composited (pressed layers, disabled content, status colors used as text); a widget's CSS never uses another widget's tokens. New status/indicator colors → add a pair to `AUDIT` in `build.mjs`.
 9. **Localization**: all docs and code comments are in English. UI copy is localized: English is the default, Vietnamese ships at launch.
    Widget/system strings live in the `MESSAGES` catalog in `widgets.js` (`NN.t('key')`); specimen sample copy uses `DS.L({ en, vi })`.
    Numbers via `NN.num(value, decimals)` (Intl.NumberFormat), never a hard-coded `,` or `.`. Check the longest string and Vietnamese diacritics with the EN/VI switch in the specimen toolbar.

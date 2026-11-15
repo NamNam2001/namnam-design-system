@@ -23,6 +23,7 @@
   "states": {
     "active": "[data-active='true']",
     "pending": "[aria-busy='true']",
+    "error": "[data-error]",
     "warning": "[data-status='warning']",
     "critical": "[data-status='critical']",
     "info": "[data-status='info']",
@@ -35,7 +36,9 @@
   "dependsOn": ["toggle"],
   "behavior": [
     "Abnormal states change only the status row and icon, never the card color (ISA-101).",
-    "Offline shows stale values as secondary and disables the control.",
+    "Offline shows stale values as secondary and disables the control (the one documented exception to status-row-only changes).",
+    "Pending adds a spinner after the status text; the status dot stays visible.",
+    "A failed command marks the status row critical (data-error) until the next command.",
     "A card is either one tap target (interactive) or contains a control, never both."
   ],
   "a11y": { "role": "group or button", "notes": "Status is aria-live=polite and always has text, not color alone." },

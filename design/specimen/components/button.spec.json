@@ -28,7 +28,9 @@
   "dependsOn": [],
   "behavior": [
     "Visual feedback on touch-down, action on release.",
-    "Loading blocks activation and keeps the measured width.",
+    "Loading blocks activation (enforced by the factory), keeps the measured width and keeps the accessible name.",
+    "Filled variants use a dark state layer so pressing never lowers text contrast.",
+    "Long labels truncate with an ellipsis.",
     "Hover exists on web only."
   ],
   "a11y": { "role": "button", "notes": "Icon-only buttons must set aria-label. Hit area >= hit-area.min." },

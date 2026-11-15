@@ -31,10 +31,14 @@
   "status": {
     "$type": "color",
     "success":         { "$value": "{color.green.600}" },
-    "warning":         { "$value": "{color.amber.600}" },
+    "warning":         { "$value": "{color.amber.700}", "$description": "amber.700, not 600: this color is also used as status text and must reach 4.5:1 on white." },
     "critical":        { "$value": "{color.red.600}" },
     "critical-strong": { "$value": "{color.red.600}" },
     "info":            { "$value": "{color.cyan.600}" }
+  },
+  "state": {
+    "$type": "color",
+    "layer-fill": { "$value": "{color.gray.950}", "$description": "State layer for filled controls with light text: darkens the fill so text contrast rises when pressed." }
   },
   "focus": {
     "$type": "color",

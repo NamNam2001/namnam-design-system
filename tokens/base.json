@@ -43,6 +43,11 @@
       "caps": { "$value": 0.04, "$description": "Letter spacing for uppercase section headers, in em." }
     }
   },
+  "icon": {
+    "$type": "number",
+    "weight": { "$value": 500, "$description": "Material Symbols wght axis; one value for the whole system (playbook 7)." },
+    "grade":  { "$value": 0, "$description": "Material Symbols GRAD axis." }
+  },
   "opacity": {
     "$type": "number",
     "state": {

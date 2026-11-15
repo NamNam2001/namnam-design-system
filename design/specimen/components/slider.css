@@ -9,7 +9,7 @@
   position: relative;
   display: block;
   width: 100%;
-  height: var(--nn-slider-hit-height);
+  height: var(--nn-slider-hit-area);
   touch-action: none;
   cursor: pointer;
   outline: none;
@@ -23,6 +23,8 @@
   right: calc(var(--nn-slider-thumb-size) / 2);
   height: var(--nn-slider-track-height);
   transform: translateY(-50%);
+  /* A recessed well with a strong outline: the track reads at >= 3:1 and the fill stays distinct from it. */
+  border: var(--nn-stroke-border) solid var(--nn-slider-track-border);
   border-radius: var(--nn-slider-radius);
   background: var(--nn-slider-track-bg);
 }
@@ -71,7 +73,8 @@
   opacity: var(--nn-opacity-state-pressed);
 }
 
-:root[data-platform='web'] .nn-slider:hover:not([aria-disabled='true']) .nn-slider__thumb::after {
+:root[data-platform='web'] .nn-slider:hover:not([aria-disabled='true']) .nn-slider__thumb::after,
+.nn-slider[data-state='hover'] .nn-slider__thumb::after {
   opacity: var(--nn-opacity-state-hover);
 }
 

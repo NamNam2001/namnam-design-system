@@ -271,7 +271,8 @@ body {
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   font-feature-settings: 'liga';
-  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: 'FILL' 0, 'wght' var(--nn-icon-weight), 'GRAD' var(--nn-icon-grade);
+  font-optical-sizing: auto;
 }
 
 @media (max-width: 640px) {

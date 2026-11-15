@@ -14,7 +14,7 @@
 
 .nn-list__header {
   margin: 0;
-  padding: var(--nn-space-sm) var(--nn-list-item-padding-x) var(--nn-space-2xs);
+  padding: var(--nn-space-sm) var(--nn-list-header-padding-x) var(--nn-space-2xs);
   color: var(--nn-list-header-fg);
   font-size: var(--nn-list-header-size);
   font-weight: var(--nn-font-weight-semibold);
@@ -38,7 +38,18 @@
   text-align: left;
 }
 
-.nn-list-item + .nn-list-item {
+/* role=list wrapper for the rows; the header stays outside the list semantics. */
+.nn-list__items {
+  display: block;
+}
+
+/* role=listitem wrapper around a button row; contributes no box. */
+.nn-list__row {
+  display: contents;
+}
+
+.nn-list__items > * + .nn-list-item,
+.nn-list__items > * + .nn-list__row > .nn-list-item {
   border-top: var(--nn-stroke-border) solid var(--nn-list-item-divider);
 }
 

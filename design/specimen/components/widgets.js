@@ -81,7 +81,8 @@
       'aria-label': label ? null : ariaLabel,
       'data-state': FORCED.includes(state) ? state : null,
       tabindex: state === 'default' ? null : '-1',
-      onclick: onClick,
+      // Loading blocks activation (playbook 6.1); the label stays in the accessibility tree.
+      onclick: (e) => { if (b.getAttribute('aria-busy') !== 'true' && onClick) onClick(e); },
     });
     if (glyph) b.append(icon(glyph, 'nn-button__icon'));
     if (label) b.append(el('span', { class: 'nn-button__label', text: label }));
@@ -136,7 +137,9 @@
     }, track, thumb);
 
     let current = value;
-    const clamp = (v) => Math.min(max, Math.max(min, Math.round(v / step) * step));
+    const stepDecimals = (String(step).split('.')[1] || '').length;
+    // Round to the step's precision so 0.1 steps never leak float noise (0.30000000000000004).
+    const clamp = (v) => Number(Math.min(max, Math.max(min, Math.round(v / step) * step)).toFixed(stepDecimals));
     function set(v, emit) {
       current = clamp(v);
       const pct = ((current - min) / (max - min)) * 100;
@@ -144,7 +147,7 @@
       // thumb is positioned relative to the root; map track % into root coordinates
       thumb.style.left = `calc(var(--nn-slider-thumb-size) / 2 + (100% - var(--nn-slider-thumb-size)) * ${pct / 100})`;
       root.setAttribute('aria-valuenow', current);
-      root.setAttribute('aria-valuetext', `${current}${unit}`);
+      root.setAttribute('aria-valuetext', `${num(current, stepDecimals)}${unit}`);
       if (emit && onInput) onInput(current);
     }
     set(value, false);
@@ -189,7 +192,7 @@
   /** Stepper for a target value, with the reported reading and normal range as context. */
   function setpoint({ label, value, min, max, step = 0.5, unit = '', decimals = 1, current, normal, state = 'default', onCommit } = {}) {
     let desired = value;
-    const valueEl = el('p', { class: 'nn-setpoint__value' });
+    const valueEl = el('p', { class: 'nn-setpoint__value', 'aria-live': 'polite', 'aria-atomic': 'true' });
     const meta = el('p', { class: 'nn-setpoint__meta', 'aria-live': 'polite' });
     const disabled = state === 'disabled';
     const dec = button({ variant: 'secondary', size: 'lg', icon: 'remove', ariaLabel: t('decrease', { label }), state: disabled ? 'disabled' : 'default' });
@@ -241,9 +244,11 @@
 
   // ------------------------------------------------------------- List / ListItem
   function list({ header, items = [] } = {}) {
-    return el('div', { class: 'nn-list', role: 'list' },
+    // Rows live in a role=list wrapper; button rows get a role=listitem wrapper (display: contents).
+    const rows = items.map((item) => (item.getAttribute('role') === 'listitem' ? item : el('div', { class: 'nn-list__row', role: 'listitem' }, item)));
+    return el('div', { class: 'nn-list' },
       header ? el('p', { class: 'nn-list__header', text: header }) : '',
-      ...items);
+      el('div', { class: 'nn-list__items', role: 'list', 'aria-label': header || null }, ...rows));
   }
 
   function listItem({ icon: glyph, title, subtitle, trailing, interactive = false, chevron = interactive, disabled = false, state = 'default', onClick } = {}) {
@@ -275,7 +280,10 @@
     if (compact) classes.push('nn-device-card--compact');
     if (interactive) classes.push('nn-device-card--interactive');
 
-    const header = el('div', { class: 'nn-device-card__header' }, icon(glyph, 'nn-device-card__icon'));
+    // A <button> may only contain phrasing content, so an interactive card is built from spans.
+    const box = interactive ? 'span' : 'div';
+    const para = interactive ? 'span' : 'p';
+    const header = el(box, { class: 'nn-device-card__header' }, icon(glyph, 'nn-device-card__icon'));
     let tgl = null;
     if (control === 'toggle') {
       tgl = toggle({ checked: active, label: title, state: status === 'offline' ? 'disabled' : pending ? 'pending' : 'default', onToggle });
@@ -285,8 +293,8 @@
       header.append(el('span', { class: 'material-symbols-rounded', 'aria-hidden': 'true', style: 'color: var(--nn-device-card-meta-fg)', text: 'chevron_right' }));
     }
 
-    const statusEl = el('p', { class: 'nn-device-card__status', 'aria-live': 'polite' });
-    const valueEl = el('p', { class: 'nn-device-card__value' });
+    const statusEl = el(para, { class: 'nn-device-card__status', 'aria-live': 'polite' });
+    const valueEl = el(para, { class: 'nn-device-card__value' });
 
     const root = el(interactive ? 'button' : 'div', {
       type: interactive ? 'button' : null,
@@ -294,7 +302,7 @@
       'data-state': interactive && FORCED.includes(state) ? state : null,
       tabindex: interactive && state !== 'default' ? '-1' : null,
       onclick: interactive ? onClick : null,
-    }, header, el('p', { class: 'nn-device-card__title', text: title }), valueEl, statusEl);
+    }, header, el(para, { class: 'nn-device-card__title', text: title }), valueEl, statusEl);
 
     root.update = (props) => {
       if ('status' in props) root.dataset.status = props.status;
@@ -307,6 +315,7 @@
         if (tgl) { if (props.pending) tgl.setAttribute('aria-busy', 'true'); else tgl.removeAttribute('aria-busy'); }
       }
       if (tgl && 'status' in props) tgl.disabled = props.status === 'offline';
+      if ('error' in props) { if (props.error) root.dataset.error = ''; else delete root.dataset.error; }
       if ('value' in props) valueEl.replaceChildren(props.value ?? '—', props.unit ?? unit ? el('span', { class: 'nn-device-card__unit', text: props.unit ?? unit }) : '');
       if ('statusText' in props || 'status' in props) statusEl.textContent = props.statusText || t(`status.${root.dataset.status}`);
     };
@@ -334,7 +343,7 @@
   function bindOnOff(card, { getOutcome, onActive }) {
     return (next) => {
       const before = card.dataset.active === 'true';
-      card.update({ active: next, pending: true, statusText: t(next ? 'turningOn' : 'turningOff') });
+      card.update({ active: next, pending: true, error: false, statusText: t(next ? 'turningOn' : 'turningOff') });
       command(getOutcome())
         .then(() => {
           card.update({ pending: false, statusText: t(next ? 'running' : 'off') });
@@ -343,6 +352,7 @@
         .catch((reason) => card.update({
           active: before,
           pending: false,
+          error: true,
           statusText: t(reason === 'timeout' ? 'stateNoResponse' : 'stateRejected'),
         }));
     };

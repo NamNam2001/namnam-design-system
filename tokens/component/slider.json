@@ -4,9 +4,10 @@
     "slider": {
       "track-height": { "$value": "{control.track-height}" },
       "thumb-size":   { "$value": "{control.thumb-size}" },
-      "hit-height":   { "$value": "{control.height.md}" },
+      "hit-area":     { "$value": "{control.height.md}" },
       "radius":       { "$value": "{radius.pill}" },
-      "track-bg":     { "$value": "{border.default}" },
+      "track-bg":     { "$value": "{bg.canvas}" },
+      "track-border": { "$value": "{border.strong}" },
       "fill-bg":      { "$value": "{accent.default}" },
       "thumb-bg":     { "$value": "{on.accent}" },
       "thumb-border": { "$value": "{border.strong}" },

@@ -60,7 +60,7 @@
 
     <section class="ds-section">
       <h2>Playground</h2>
-      <p class="ds-lead">Real buttons. Press "Apply" to see loading → done. Web has hover; embedded does not.</p>
+      <p class="ds-lead">Real buttons, including two icon-only ones (<code>--icon</code>, named by aria-label). Press "Apply" to see loading → done. Web has hover; embedded does not.</p>
       <div class="ds-panel"><div class="playground" id="playground"></div></div>
     </section>
 
@@ -127,6 +127,8 @@
         button({ variant: 'secondary', label: DS.L({ en: 'Fan mode', vi: 'Chế độ quạt' }), icon: 'mode_fan' }),
         button({ variant: 'ghost', label: DS.L({ en: 'Cancel', vi: 'Huỷ' }) }),
         button({ variant: 'danger', label: DS.L({ en: 'Emergency stop', vi: 'Dừng khẩn' }), icon: 'warning' }),
+        button({ variant: 'secondary', icon: 'settings', ariaLabel: DS.L({ en: 'Settings', vi: 'Cài đặt' }) }),
+        button({ variant: 'ghost', icon: 'refresh', ariaLabel: DS.L({ en: 'Refresh', vi: 'Làm mới' }) }),
         button({ state: 'disabled', label: DS.L({ en: 'Unavailable', vi: 'Không khả dụng' }) }));
     }
 

@@ -555,6 +555,9 @@ ui-web/
 - [x] **No overflow**: the visible part of a control stays inside its container's padding box; only the extra touch area (hit-area − visible size) may extend into the padding. The overflow amount is computed from tokens, never hard-coded. *(Learned from the 2026-11-15 bug: toggle overflowed the device-card border.)* (`test:browser: containment`)
 - [x] **No line-height bump**: smaller inline text (units, badges) must not increase the height of its line (`line-height: 1`). *(Bug 2026-11-15: value rows misaligned between cards with/without a unit; the audit then found the same bug in Setpoint.)* (`test:browser: line-box`)
 - [x] Docs and code are English; Vietnamese only in locale catalogs (`lint: english`)
+- [x] **Contrast is audited as composited**: pressed state layers under text, disabled content on the surface it sits on, status colors used as text at 4.5:1, indicators against their real neighbour (`AUDIT` in `build.mjs`). A new color role used as text or as an indicator gets an audit pair in the same commit.
+- [x] A widget's CSS never uses another widget's component tokens (`lint: layering`); hover / pressed / focused each have a forced `[data-state]` hook (`lint: spec`)
+- [x] Every theme file and every platform mode file define the same token names; no two tokens export under the same name (`build.mjs`)
 - [ ] **Screens are layout only**: CSS in `screens/` may only use grid/flex/gap/area sizes via tokens; no colors, borders, radii or custom states.
 - [ ] **All screen states**: every screen has loading / empty / error / offline (+ long-running operation if any)
 - [ ] **Longest localized string** (Vietnamese stress cases: diacritics, longest strings) does not break the layout (truncate with "…" or wrap per spec); numbers/units are formatted per locale, with no hard-coded decimal separators
@@ -981,6 +984,12 @@ General principles when assigning work:
 | 2026-11-15 | All documentation in English; UI copy localized (en default, vi at launch) | Repo is international; Vietnamese kept as a localization stress test | Nam |
 | 2026-11-15 | Widget specs are machine-readable (`<block>.spec.json`), checked against CSS by the lint | One description feeds specimen, LVGL and the future Figma generator | Nam |
 | 2026-11-15 | Quality gates automated: `npm run verify` + GitHub Actions (static lint + browser geometry audit) | Rules that are not checked by a machine drift; the audit immediately found a line-box bug in Setpoint | Nam |
+| 2026-11-15 | Filled buttons use a dark state layer (`state.layer-fill`); secondary/ghost keep the content-color layer | A white layer on a blue fill dropped white text to 4.0:1 when pressed; found by an external review | Nam |
+| 2026-11-15 | Light `status.warning` is amber.700; status colors used as text are audited at 4.5:1 | Warning text on a white card was 3.99:1 | Nam |
+| 2026-11-15 | Slider track is a recessed well (`bg.canvas`) with a `border.strong` outline | Track was 1.7:1 against the card; an outline keeps the fill distinct from the track | Nam |
+| 2026-11-15 | A failed device command marks the status row critical (`data-error`); pending adds a spinner and keeps the status dot | Playbook 6.1 error treatment and ISA-101 "state always visible" | Nam |
+| 2026-11-15 | CSS tokens fall back when an attribute is missing: theme → dark, platform → web | A web app that set only `data-theme` got no tokens at all | Nam |
+| 2026-11-15 | Not changed after review: secondary button boundary contrast (label identifies the control), RGB565 truncation (matches LVGL), disabled slider focusability | Judged design choices, not defects; revisit after the real-board review | Nam |
 
 ---
 

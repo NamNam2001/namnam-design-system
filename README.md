@@ -21,6 +21,11 @@ npm run verify          # everything above; CI runs the same (.github/workflows/
 Open `design/specimen/index.html` in a browser. Use the toolbar to switch **Dark/Light** and **Web/Embedded 7"**.
 Fonts and icons load from Google Fonts; offline, text falls back to sans-serif and icons show their names.
 
+## Using the tokens in a web app
+
+Load `build/web/tokens.css` and set attributes on `<html>`: `data-theme="dark|light"` and `data-platform="web|embedded-7in"`.
+Either attribute may be omitted: a missing theme falls back to `dark`, a missing platform to `web`.
+
 ## Naming (playbook §3.3)
 
 Everything exported carries the system prefix, so NamNam can live inside other web apps or LVGL projects without collisions.
@@ -55,8 +60,8 @@ build/                       GENERATED, do not edit
 design/specimen/             one page per layer/widget: every modifier x every state
   components/*.css           widget styles (BEM, nn- prefix), token custom properties only
   components/<block>.spec.json  machine-readable widget spec, cross-checked against the CSS by the lint
-tools/design-lint/           lint.mjs (static rules) + browser-audit.mjs (DS.audit() on every specimen)
   components/widgets.js      widget factories (NN.*) + simulated device command / statechart
+tools/design-lint/           lint.mjs (static rules) + browser-audit.mjs (DS.audit() on every specimen)
 ```
 
 ## Widgets so far

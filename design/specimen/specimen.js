@@ -135,7 +135,8 @@
      * Geometry audit of the rendered page (playbook §15.1). Returns a list of failures; empty = pass.
      * Run it in the console (DS.audit()) or headless via `npm run test:browser`.
      *   hit-area     interactive widgets are at least hit-area.min in both dimensions
-     *   containment  visible parts of a widget stay inside the widget's box (hit-area wrappers may spill)
+     *   containment  visible parts of a widget stay inside its content box, i.e. clear of padding and border
+     *                (hit-area wrappers may spill into the padding)
      *   line-box     single-line values are exactly one line tall (smaller inline text must not grow the line)
      */
     audit() {
@@ -163,10 +164,19 @@
 
       document.querySelectorAll('.nn-device-card, .nn-list, .nn-button, .nn-setpoint, .nn-slider').forEach((box) => {
         if (!shown(box)) return;
-        const outer = box.getBoundingClientRect();
+        // Compare against the padding box's inner edge (content box): parts may not sit in the padding or border.
+        const rect = box.getBoundingClientRect();
+        const cs = getComputedStyle(box);
+        const inset = (side) => parseFloat(cs[`border${side}Width`]) + parseFloat(cs[`padding${side}`]);
+        const outer = {
+          left: rect.left + inset('Left'), right: rect.right - inset('Right'),
+          top: rect.top + inset('Top'), bottom: rect.bottom - inset('Bottom'),
+        };
         box.querySelectorAll('[class*="nn-"]').forEach((part) => {
           // .nn-toggle is a transparent hit-area wrapper: its surplus may spill; its track/thumb are checked.
           if (part.classList.contains('nn-toggle') || !shown(part)) return;
+          // A rotating spinner's bounding box changes with its angle; measuring it would make the audit flaky.
+          if (getComputedStyle(part).animationName !== 'none') return;
           const r = part.getBoundingClientRect();
           const over = Math.max(outer.left - r.left, r.right - outer.right, outer.top - r.top, r.bottom - outer.bottom);
           if (over > TOLERANCE) fail('containment', part, `overflows ${describe(box)} by ${Math.round(over * 10) / 10}px`);

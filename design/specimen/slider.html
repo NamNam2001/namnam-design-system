@@ -96,9 +96,8 @@
           ...STATES.map((state) => {
             const na = state === 'hover' && touch;
             const props = { value: 62, normal: [40, 80], state, label: state, unit: '%' };
-            // hover cannot be forced on a slider via attribute; show default look with a note
             return el('td', { class: na ? 'is-na' : null }, NN.slider(props),
-              na ? el('span', { class: 'ds-na', text: 'n/a on touch' }) : state === 'hover' ? el('span', { class: 'ds-na', text: 'hover to see' }) : '');
+              na ? el('span', { class: 'ds-na', text: 'n/a on touch' }) : '');
           }))));
     }
 

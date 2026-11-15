@@ -8,7 +8,9 @@
  *   raw-value     no hex colors or px/ms/s/em/rem literals in widget CSS (values come from tokens)
  *   token-ref     every var(--nn-*) used in design/ exists in build/web/tokens.css
  *   naming        widget CSS classes use the nn- prefix; no state words in class names
- *   spec          every widget block has a <block>.spec.json that matches its CSS, tokens, factory and specimen
+ *   spec          every widget block has a <block>.spec.json that matches its CSS, tokens, factory and specimen;
+ *                 hover/pressed/focused must also have a forced [data-state] hook
+ *   layering      a widget's CSS never uses another widget's component tokens
  *   english       docs and code are English; Vietnamese only inside locale catalogs / DS.L({ vi })
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
@@ -22,7 +24,8 @@ const PREFIX = 'nn';
 const SHARED_CSS = new Set(['base.css']);
 const FOREIGN_CLASSES = new Set(['material-symbols-rounded']);
 const STATE_WORDS = ['hover', 'pressed', 'active', 'focused', 'focus', 'disabled', 'loading', 'pending', 'selected', 'checked', 'on', 'off', 'error', 'offline'];
-const VIETNAMESE = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
+const FORCEABLE_STATES = ['hover', 'pressed', 'focused'];
+const VIETNAMESE =/[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
 
 const problems = [];
 const rel = (p) => relative(ROOT, p).replaceAll('\\', '/');
@@ -139,6 +142,12 @@ for (const file of specFiles) {
     const css = stripCssComments(read(cssPath));
     for (const [state, hook] of Object.entries(spec.states)) {
       if (!css.includes(hook)) report('spec', file, `state "${state}" expects ${hook} in ${spec.css}`);
+      // Interaction states must also be forceable, so the specimen matrix can show them.
+      const forced = `.nn-${spec.block}[data-state='${state}']`;
+      const forcedPattern = new RegExp(`\\.nn-${spec.block}(--[a-z0-9-]+)?\\[data-state='${state}'\\]`); // on the block or one of its modifiers
+      if (FORCEABLE_STATES.includes(state) && !forcedPattern.test(css)) {
+        report('spec', file, `state "${state}" has no forced hook ${forced} in ${spec.css} (the specimen cannot show it)`);
+      }
     }
   }
   if (definedTokens) {
@@ -157,6 +166,23 @@ const owned = new Set([...specs.values()].flatMap((s) => s.tokens));
 for (const file of listFiles(componentDir, '.json')) {
   for (const group of Object.keys(JSON.parse(read(file)).component ?? {})) {
     if (!owned.has(group)) report('spec', file, `token group component.${group} is not claimed by any spec ("tokens")`);
+  }
+}
+
+// ---------------------------------------------------------------- layering
+// A widget's CSS may use semantic tokens and its own component tokens, never another widget's
+// (playbook §4.1). Shared needs get an alias in the widget's own tokens/component file.
+const prefixOwners = new Map(); // token prefix -> css file that owns it
+for (const spec of specs.values()) for (const prefix of spec.tokens) prefixOwners.set(prefix, spec.css);
+const ownedPrefixes = [...prefixOwners.keys()].sort((a, b) => b.length - a.length); // longest first: list-item before list
+for (const file of componentCss) {
+  if (SHARED_CSS.has(baseName(file))) continue;
+  const css = stripCssComments(read(file));
+  for (const m of css.matchAll(/var\(--nn-([a-z0-9-]+)/g)) {
+    const prefix = ownedPrefixes.find((p) => m[1] === p || m[1].startsWith(`${p}-`));
+    if (prefix && prefixOwners.get(prefix) !== baseName(file)) {
+      report('layering', file, `--nn-${m[1]} belongs to "${prefix}" (${prefixOwners.get(prefix)}): add an alias in this widget's component tokens`, lineOf(css, m.index));
+    }
   }
 }
 
@@ -181,7 +207,7 @@ for (const file of englishTargets) {
 }
 
 // ---------------------------------------------------------------- output
-const RULES = ['raw-value', 'token-ref', 'naming', 'spec', 'english'];
+const RULES = ['raw-value', 'token-ref', 'naming', 'spec', 'layering', 'english'];
 for (const rule of RULES) {
   const found = problems.filter((p) => p.rule === rule);
   console.log(`${found.length ? 'FAIL' : 'ok  '} ${rule}${found.length ? `: ${found.length} problem(s)` : ''}`);

@@ -7,7 +7,9 @@
   "specimen": "list-item.html",
   "factory": "list",
   "elements": {
-    "header": "Uppercase section title."
+    "header": "Uppercase section title. Outside the list semantics.",
+    "items": "role=list wrapper around the rows.",
+    "row": "role=listitem wrapper around a button row (display: contents)."
   },
   "modifiers": {},
   "defaults": {},

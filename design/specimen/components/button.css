@@ -13,6 +13,8 @@
   --_height: var(--nn-button-height-md);
   --_pad: var(--nn-button-padding-x-md);
   --_icon: var(--nn-button-icon-size-md);
+  /* Filled variants (light text on a fill) get a dark layer: pressing must not lower text contrast. */
+  --_layer: var(--nn-button-state-layer-fill);
 
   position: relative;
   isolation: isolate;
@@ -21,6 +23,7 @@
   justify-content: center;
   gap: var(--nn-button-gap);
   min-width: var(--_height);
+  max-width: 100%;
   height: var(--_height);
   padding: 0 var(--_pad);
   overflow: hidden;
@@ -39,13 +42,13 @@
   transition: background-color var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
 }
 
-/* State layer: content color at a fixed opacity (Material-style). */
+/* State layer at a fixed opacity: dark on filled variants, content color on secondary/ghost. */
 .nn-button::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: currentColor;
+  background: var(--_layer);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--nn-motion-duration-micro) var(--nn-motion-easing-standard);
@@ -56,12 +59,14 @@
   --_bg: var(--nn-button-secondary-bg);
   --_fg: var(--nn-button-secondary-fg);
   --_border: var(--nn-button-secondary-border);
+  --_layer: currentColor;
 }
 
 .nn-button--ghost {
   --_bg: transparent;
   --_fg: var(--nn-button-ghost-fg);
   --_border: transparent;
+  --_layer: currentColor;
 }
 
 .nn-button--danger {
@@ -94,7 +99,15 @@
   width: var(--_icon);
   height: var(--_icon);
   font-size: var(--_icon);
-  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: 'FILL' 0, 'wght' var(--nn-icon-weight), 'GRAD' var(--nn-icon-grade);
+  font-optical-sizing: auto;
+}
+
+/* Long labels truncate with an ellipsis instead of being clipped mid-glyph. */
+.nn-button__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nn-button__spinner {
@@ -130,7 +143,7 @@
 .nn-button:disabled {
   --_bg: var(--nn-button-disabled-bg);
   --_fg: var(--nn-button-disabled-fg);
-  --_border: var(--nn-button-disabled-bg);
+  --_border: var(--nn-button-disabled-border);
   cursor: not-allowed;
 }
 
@@ -143,14 +156,14 @@
   opacity: var(--nn-button-disabled-opacity);
 }
 
-/* Loading keeps the measured width: content is hidden, not removed. */
+/* Loading keeps the measured width and the accessible name: content is transparent, not hidden or removed. */
 .nn-button[aria-busy='true'] {
   cursor: progress;
 }
 
 .nn-button[aria-busy='true'] .nn-button__icon,
 .nn-button[aria-busy='true'] .nn-button__label {
-  visibility: hidden;
+  opacity: 0;
 }
 
 .nn-button[aria-busy='true'] .nn-button__spinner {

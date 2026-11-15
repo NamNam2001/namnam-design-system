@@ -19,6 +19,9 @@
       "meta-line":   { "$value": "{type.caption.line-height}" },
       "meta-fg":     { "$value": "{text.secondary}" },
       "dot-size":    { "$value": "{space.xs}" },
+      "control-hit-area": { "$value": "{control.height.md}" },
+      "control-width":    { "$value": "{control.switch-width}" },
+      "control-height":   { "$value": "{control.switch-height}" },
       "status": {
         "ok":       { "$value": "{status.success}" },
         "warning":  { "$value": "{status.warning}" },

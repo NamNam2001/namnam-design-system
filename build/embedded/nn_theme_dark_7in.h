@@ -2,6 +2,7 @@
  * NamNam design tokens. Theme: dark   Platform: embedded-7in
  * Colors: lv_color_hex(NN_TK_X) for RGB888 panels, NN_TK_X_565 for RGB565.
  * Opacity tokens are lv_opa_t (0-255). Motion paths are lv_anim path callbacks.
+ * These are macros only: include "lvgl.h" before using LV_RADIUS_CIRCLE / lv_anim_path_* tokens.
  */
 #ifndef NN_THEME_DARK_EMBEDDED_7IN_H
 #define NN_THEME_DARK_EMBEDDED_7IN_H
@@ -36,6 +37,10 @@
 #define NN_TK_FONT_WEIGHT_MEDIUM 500
 #define NN_TK_FONT_WEIGHT_SEMIBOLD 600
 #define NN_TK_FONT_TRACKING_CAPS 0.04
+
+/* ---- icon ---- */
+#define NN_TK_ICON_WEIGHT 500
+#define NN_TK_ICON_GRADE 0
 
 /* ---- opacity ---- */
 #define NN_TK_OPACITY_STATE_HOVER 20 /* lv_opa_t, 0.08 */
@@ -99,6 +104,10 @@
 #define NN_TK_STATUS_INFO 0x4CC9F0 /* #4CC9F0; use lv_color_hex(NN_TK_STATUS_INFO) */
 #define NN_TK_STATUS_INFO_565 0x4E5E
 
+/* ---- state ---- */
+#define NN_TK_STATE_LAYER_FILL 0x0E1013 /* #0E1013; use lv_color_hex(NN_TK_STATE_LAYER_FILL) */
+#define NN_TK_STATE_LAYER_FILL_565 0x0882
+
 /* ---- focus ---- */
 #define NN_TK_FOCUS_RING 0x5AA9FF /* #5AA9FF; use lv_color_hex(NN_TK_FOCUS_RING) */
 #define NN_TK_FOCUS_RING_565 0x5D5F
@@ -154,6 +163,8 @@
 #define NN_TK_BUTTON_GAP 8
 #define NN_TK_BUTTON_FONT_SIZE 20
 #define NN_TK_BUTTON_FONT_WEIGHT 600
+#define NN_TK_BUTTON_STATE_LAYER_FILL 0x0E1013 /* #0E1013; use lv_color_hex(NN_TK_BUTTON_STATE_LAYER_FILL) */
+#define NN_TK_BUTTON_STATE_LAYER_FILL_565 0x0882
 #define NN_TK_BUTTON_HEIGHT_SM 48
 #define NN_TK_BUTTON_HEIGHT_MD 60
 #define NN_TK_BUTTON_HEIGHT_LG 72
@@ -187,6 +198,8 @@
 #define NN_TK_BUTTON_DISABLED_BG_565 0x2146
 #define NN_TK_BUTTON_DISABLED_FG 0xF6F7F8 /* #F6F7F8; use lv_color_hex(NN_TK_BUTTON_DISABLED_FG) */
 #define NN_TK_BUTTON_DISABLED_FG_565 0xF7BF
+#define NN_TK_BUTTON_DISABLED_BORDER 0x262B31 /* #262B31; use lv_color_hex(NN_TK_BUTTON_DISABLED_BORDER) */
+#define NN_TK_BUTTON_DISABLED_BORDER_565 0x2146
 #define NN_TK_BUTTON_DISABLED_OPACITY 97 /* lv_opa_t, 0.38 */
 
 /* ---- device-card ---- */
@@ -212,6 +225,9 @@
 #define NN_TK_DEVICE_CARD_META_FG 0x959CA4 /* #959CA4; use lv_color_hex(NN_TK_DEVICE_CARD_META_FG) */
 #define NN_TK_DEVICE_CARD_META_FG_565 0x94F4
 #define NN_TK_DEVICE_CARD_DOT_SIZE 8
+#define NN_TK_DEVICE_CARD_CONTROL_HIT_AREA 60
+#define NN_TK_DEVICE_CARD_CONTROL_WIDTH 60
+#define NN_TK_DEVICE_CARD_CONTROL_HEIGHT 36
 #define NN_TK_DEVICE_CARD_STATUS_OK 0x3FCF8E /* #3FCF8E; use lv_color_hex(NN_TK_DEVICE_CARD_STATUS_OK) */
 #define NN_TK_DEVICE_CARD_STATUS_OK_565 0x3E71
 #define NN_TK_DEVICE_CARD_STATUS_WARNING 0xFFC24D /* #FFC24D; use lv_color_hex(NN_TK_DEVICE_CARD_STATUS_WARNING) */
@@ -234,6 +250,7 @@
 #define NN_TK_LIST_BORDER_565 0x2146
 #define NN_TK_LIST_RADIUS 20
 #define NN_TK_LIST_HEADER_SIZE 16
+#define NN_TK_LIST_HEADER_PADDING_X 16
 #define NN_TK_LIST_HEADER_FG 0x959CA4 /* #959CA4; use lv_color_hex(NN_TK_LIST_HEADER_FG) */
 #define NN_TK_LIST_HEADER_FG_565 0x94F4
 
@@ -260,10 +277,12 @@
 /* ---- slider ---- */
 #define NN_TK_SLIDER_TRACK_HEIGHT 8
 #define NN_TK_SLIDER_THUMB_SIZE 28
-#define NN_TK_SLIDER_HIT_HEIGHT 60
+#define NN_TK_SLIDER_HIT_AREA 60
 #define NN_TK_SLIDER_RADIUS LV_RADIUS_CIRCLE
-#define NN_TK_SLIDER_TRACK_BG 0x3A4047 /* #3A4047; use lv_color_hex(NN_TK_SLIDER_TRACK_BG) */
-#define NN_TK_SLIDER_TRACK_BG_565 0x3A08
+#define NN_TK_SLIDER_TRACK_BG 0x0E1013 /* #0E1013; use lv_color_hex(NN_TK_SLIDER_TRACK_BG) */
+#define NN_TK_SLIDER_TRACK_BG_565 0x0882
+#define NN_TK_SLIDER_TRACK_BORDER 0x707780 /* #707780; use lv_color_hex(NN_TK_SLIDER_TRACK_BORDER) */
+#define NN_TK_SLIDER_TRACK_BORDER_565 0x73B0
 #define NN_TK_SLIDER_FILL_BG 0x1F6FD1 /* #1F6FD1; use lv_color_hex(NN_TK_SLIDER_FILL_BG) */
 #define NN_TK_SLIDER_FILL_BG_565 0x1B7A
 #define NN_TK_SLIDER_THUMB_BG 0xFFFFFF /* #FFFFFF; use lv_color_hex(NN_TK_SLIDER_THUMB_BG) */

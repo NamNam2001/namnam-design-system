@@ -148,7 +148,7 @@
         el('tbody', {}, ...rows.map((r) => el('tr', {},
           el('td', { text: r.kind }),
           el('td', { class: 'ds-mono', text: r.fg + (r.alpha ? ` @ ${r.alpha}` : '') }),
-          el('td', { class: 'ds-mono', text: r.bg }),
+          el('td', { class: 'ds-mono', text: r.bg + (r.layer ? ` + ${r.layer} @ ${r.layerAlpha}` : '') }),
           el('td', { text: r.ratio.toFixed(2) }),
           el('td', { text: r.min }),
           el('td', {}, el('span', { class: `ds-badge ds-badge--${r.pass ? 'pass' : 'fail'}`, text: r.pass ? 'PASS' : 'FAIL' }))))));

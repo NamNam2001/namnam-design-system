@@ -81,6 +81,7 @@
       { caption: 'ok · on', icon: 'ac_unit', title: DS.L({ en: 'Air conditioner', vi: 'Điều hoà' }), value: '24', unit: '°C', active: true, status: 'ok', statusText: DS.L({ en: 'Cooling · room 26°C', vi: 'Đang làm mát · phòng 26°C' }) },
       { caption: 'ok · off', icon: 'lightbulb', title: DS.L({ en: 'Ceiling light', vi: 'Đèn trần' }), value: DS.L({ en: 'Off', vi: 'Tắt' }), unit: '', active: false, status: 'ok', statusText: DS.L({ en: 'Off', vi: 'Đã tắt' }) },
       { caption: 'warning', icon: 'mode_fan', title: DS.L({ en: 'Exhaust fan', vi: 'Quạt hút' }), value: DS.L({ en: 'Level 3', vi: 'Mức 3' }), unit: '', active: true, status: 'warning', statusText: DS.L({ en: 'Filter needs cleaning', vi: 'Lọc gió cần vệ sinh' }) },
+      { caption: 'info · no control', icon: 'system_update', title: DS.L({ en: 'Controller', vi: 'Bộ điều khiển' }), value: '1.4.2', unit: '', active: true, status: 'info', statusText: DS.L({ en: 'Update available', vi: 'Có bản cập nhật' }), control: null },
       { caption: 'critical · no control', icon: 'thermostat', title: DS.L({ en: 'Temperature sensor', vi: 'Cảm biến nhiệt' }), value: '—', unit: '°C', active: false, status: 'critical', statusText: DS.L({ en: 'Sensor fault · check wiring', vi: 'Lỗi cảm biến · kiểm tra dây' }), control: null },
       { caption: 'offline', icon: 'power', title: DS.L({ en: 'Smart plug', vi: 'Ổ cắm thông minh' }), value: NN.num(0.8, 1), unit: 'kW', active: true, status: 'offline', statusText: DS.L({ en: 'Offline · 5 min ago', vi: 'Mất kết nối · 5 phút trước' }) },
       { caption: 'pending', icon: 'ac_unit', title: DS.L({ en: 'Air conditioner, room B', vi: 'Điều hoà phòng B' }), value: '22', unit: '°C', active: true, status: 'ok', statusText: NN.t('turningOn'), pending: true },
@@ -101,7 +102,7 @@
     }
 
     function renderModifiers() {
-      document.getElementById('compact').replaceChildren(...SAMPLES.slice(0, 5).map((s) => card(s, { compact: true })));
+      document.getElementById('compact').replaceChildren(...SAMPLES.slice(0, 6).map((s) => card(s, { compact: true })));
       document.getElementById('interactive').replaceChildren(...[['default'], ['pressed'], ['focused']].map(([state]) =>
         el('div', {},
           NN.deviceCard({ icon: 'meeting_room', title: DS.L({ en: 'Meeting room A', vi: 'Phòng họp A' }), value: '3', unit: DS.L({ en: 'devices running', vi: 'thiết bị đang chạy' }), status: 'ok', statusText: NN.t('status.ok'), active: true, control: 'chevron', state }),
