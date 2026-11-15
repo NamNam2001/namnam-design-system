@@ -26,3 +26,43 @@ jobs:
 
       # Geometry audit of every specimen (uses the Chrome preinstalled on the runner).
       - run: npm run test:browser
+
+  # Publish the specimens to GitHub Pages, only from main and only after every check passed.
+  deploy:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+
+      # Keep the repo layout so the specimens' relative paths (../../build/web/...) still resolve.
+      - name: Assemble site
+        run: |
+          mkdir -p _site/design _site/build
+          cp -r design/specimen _site/design/
+          cp -r build/web _site/build/
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>NamNam Design System</title>
+          <meta http-equiv="refresh" content="0; url=design/specimen/index.html">
+          <a href="design/specimen/index.html">NamNam specimens</a>
+          HTML
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

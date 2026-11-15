@@ -1,5 +1,7 @@
 # NamNam Design System
 
+**Live specimens:** https://namnam2001.github.io/namnam-design-system/ (redeployed from `main` after CI passes)
+
 Design tokens, widgets and specimens for IoT UI: embedded (LVGL on ESP32-P4) and web, from one source.
 Design philosophy: **Calm Control** (ISA-101 backbone + Apple HIG refinement).
 
@@ -90,3 +92,7 @@ lv_obj_set_height(btn, NN_TK_BUTTON_HEIGHT_MD);
 - Target panel: 7" 1024x600 assumed; 4.3" would need a `modes/embedded-4.3in.json`.
 - Final font (Inter is a placeholder; must cover Vietnamese and allow embedding).
 - Icon style: Material Symbols Rounded used for now.
+
+## License
+
+[MIT](LICENSE)
