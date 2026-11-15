@@ -1,0 +1,28 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Token build + contrast audit, then static design lint.
+      - run: npm run check
+
+      - name: Generated files are committed
+        run: git diff --exit-code -- build
+
+      # Geometry audit of every specimen (uses the Chrome preinstalled on the runner).
+      - run: npm run test:browser
