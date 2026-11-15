@@ -1,0 +1,6 @@
+# Same line endings on every machine (Windows, macOS, Linux, CI).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ttf binary
+*.woff2 binary
