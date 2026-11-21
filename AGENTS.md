@@ -32,6 +32,7 @@ npm run verify          # check + test:browser; run before every commit
 | `design/specimen/components/*.css` | Widget styles (BEM, `nn-` prefix); `base.css` holds shared keyframes | Yes |
 | `design/specimen/components/<block>.spec.json` | Machine-readable widget spec: elements, modifiers, state hooks, tokens, behavior. Must match the CSS | Yes, in the same commit as the CSS |
 | `tools/design-lint/` | `lint.mjs` (static rules) and `browser-audit.mjs` (runs `DS.audit()` on every specimen) | Yes, when adding a rule |
+| `tools/figma-plugin/` | Figma plugin source (`plugin.js`, `manifest.json`) and `test-sync.mjs` (runs it against a fake Figma API). Built to `build/figma/` by `npm run tokens` | Yes; Figma output is generated, never edited by hand |
 | `design/specimen/components/widgets.js` | Widget factories `NN.*` + simulated device command | Yes |
 | `design/specimen/*.html` | One specimen page per layer/widget | Yes |
 | `docs/PLAYBOOK.md` | Rules, workflows, decision log | Yes: record every decision in §19 |

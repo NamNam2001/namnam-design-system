@@ -214,7 +214,13 @@ tokens/*.json (repo — primary source)
 ### 4.4 Figma (currently on the free plan)
 
 - **The repo `tokens/` is the primary source; Figma follows** (the free plan limits Variables modes and MCP calls).
-- Designers change tokens via PR into `tokens/`, then update Figma Variables/Styles to match (the PoC has only ~20–40 tokens).
+- **Figma is generated, not hand-synced**: the NamNam Figma plugin (`tools/figma-plugin/`, built to `build/figma/`)
+  creates or updates the Variables (collections NN · Primitives / Base / Theme / Platform / Components, aliases kept,
+  WEB code syntax `var(--nn-*)`, primitives hidden) and regenerates the "NamNam · Foundations" page.
+  Change tokens → `npm run tokens` → run the plugin again. Never edit the generated variables by hand.
+  If the plan limits modes, the plugin splits Theme/Platform into one collection per mode.
+  `npm run test:figma` runs the plugin against a fake Figma API in CI. Phase 2 (planned): components from `<block>.spec.json`.
+- Designers change tokens via PR into `tokens/`, then re-run the plugin.
 - Screen handoff to devs/agents: **PNG at native resolution (1x) + short notes** (sizes, spacing, touch behavior).
 - Figma MCP: only for complex screens that need exact measurements (the free plan has only a few calls per month).
 - When upgrading to paid Figma: Figma Variables + Tokens Studio can become the source, with two-way sync to the repo.
@@ -990,6 +996,7 @@ General principles when assigning work:
 | 2026-11-15 | A failed device command marks the status row critical (`data-error`); pending adds a spinner and keeps the status dot | Playbook 6.1 error treatment and ISA-101 "state always visible" | Nam |
 | 2026-11-15 | CSS tokens fall back when an attribute is missing: theme → dark, platform → web | A web app that set only `data-theme` got no tokens at all | Nam |
 | 2026-11-15 | Not changed after review: secondary button boundary contrast (label identifies the control), RGB565 truncation (matches LVGL), disabled slider focusability | Judged design choices, not defects; revisit after the real-board review | Nam |
+| 2026-11-22 | Figma is generated from tokens by an in-repo plugin (tools/figma-plugin), not drawn by AI or synced by hand | Deterministic and re-runnable at zero AI cost; keeps Figma identical to code across partners | Nam |
 
 ---
 

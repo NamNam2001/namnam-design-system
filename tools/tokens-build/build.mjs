@@ -89,7 +89,7 @@ function flatten(node, layer, out, prefix = [], inheritedType = undefined) {
     if ('$value' in child) {
       const id = path.join('.');
       if (out.has(id)) throw new Error(`duplicate token "${id}" (layer ${layer})`);
-      out.set(id, { id, type, value: child.$value, ext: child.$extensions, layer });
+      out.set(id, { id, type, value: child.$value, ext: child.$extensions, layer, description: child.$description });
     } else {
       flatten(child, layer, out, path, type);
     }
@@ -393,6 +393,55 @@ function assertUniqueOutputNames(tokens) {
   }
 }
 
+/**
+ * Data for the Figma plugin (tools/figma-plugin/plugin.js). Keeps the layering and the aliases, so Figma
+ * variables reference each other the same way tokens do. Collections mirror the token files:
+ * primitive / base (one mode), theme (one mode per theme), platform (one mode per platform), component (one mode).
+ */
+function buildFigmaData(combos) {
+  const all = loadSet(DEFAULT.theme, DEFAULT.platform);
+  const typeOf = (id) => resolve(all, id).type;
+  const entry = (t, values) => ({ id: t.id, type: typeOf(t.id), values, ...(t.description ? { description: t.description } : {}) });
+  const single = (files, layer) => {
+    const map = new Map();
+    for (const file of files) flatten(readJson(file), layer, map);
+    return { modes: ['value'], tokens: [...map.values()].map((t) => entry(t, { value: t.value })) };
+  };
+  const perMode = (modes, fileOf, layer) => {
+    const maps = modes.map((m) => flatten(readJson(fileOf(m)), layer, new Map()));
+    return {
+      modes,
+      tokens: [...maps[0].values()].map((t) => entry(t, Object.fromEntries(modes.map((m, i) => [m, maps[i].get(t.id).value])))),
+    };
+  };
+  const componentFiles = readdirSync(tokensPath('component')).filter((f) => f.endsWith('.json')).sort().map((f) => tokensPath('component', f));
+  const resolved = {};
+  for (const [key, tokens] of Object.entries(combos)) {
+    resolved[key] = Object.fromEntries(tokens.map((t) => [publicName(t.id), cssValue(t)]));
+  }
+  return {
+    system: SYSTEM,
+    defaults: DEFAULT,
+    themes: THEMES,
+    platforms: PLATFORMS,
+    collections: {
+      primitive: single([tokensPath('primitive.json')], 'primitive'),
+      base: single([tokensPath('base.json')], 'semantic'),
+      theme: perMode(THEMES, (t) => tokensPath('semantic', `${t}.json`), 'semantic'),
+      platform: perMode(PLATFORMS, (p) => tokensPath('modes', `${p}.json`), 'semantic'),
+      component: single(componentFiles, 'component'),
+    },
+    resolved,
+  };
+}
+
+function buildFigmaPlugin(combos) {
+  const source = readFileSync(join(ROOT, 'tools', 'figma-plugin', 'plugin.js'), 'utf8');
+  const data = JSON.stringify(buildFigmaData(combos));
+  write(buildPath('figma', 'code.js'), `/* ${GENERATED_NOTE} Plugin source: tools/figma-plugin/plugin.js */\nconst NN_DATA = ${data};\n\n${source}`);
+  write(buildPath('figma', 'manifest.json'), readFileSync(join(ROOT, 'tools', 'figma-plugin', 'manifest.json'), 'utf8'));
+}
+
 function main() {
   assertSameNames('theme', THEMES, (t) => tokensPath('semantic', `${t}.json`));
   assertSameNames('platform mode', PLATFORMS, (p) => tokensPath('modes', `${p}.json`));
@@ -412,12 +461,14 @@ function main() {
   }
   write(buildPath('embedded', `${SYSTEM.file}_theme.h`), buildSelectorHeader());
   write(buildPath('audit.md'), buildAuditMd(audit));
+  buildFigmaPlugin(combos);
 
   const count = combos[`${DEFAULT.theme}/${DEFAULT.platform}`].length;
   const failed = audit.filter((r) => !r.pass);
   console.log(`ok   ${count} tokens x ${THEMES.length} themes x ${PLATFORMS.length} platforms`);
   console.log('ok   build/web/tokens.css, build/web/tokens.js');
   console.log(`ok   build/embedded/${SYSTEM.file}_theme.h + ${EMBEDDED_PLATFORMS.length * THEMES.length} theme headers`);
+  console.log('ok   build/figma/ (Figma plugin: import build/figma/manifest.json in Figma desktop)');
   console.log(`${failed.length ? 'WARN' : 'ok  '} contrast audit: ${audit.length - failed.length}/${audit.length} pass (build/audit.md)`);
   for (const r of failed) console.log(`     FAIL [${r.theme}] ${r.fg}${r.alpha ? ` @${r.alpha}` : ''} on ${r.bg}: ${r.ratio} < ${r.min}`);
   if (STRICT && failed.length) process.exit(1);

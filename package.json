@@ -7,7 +7,8 @@
     "tokens": "node tools/tokens-build/build.mjs",
     "tokens:check": "node tools/tokens-build/build.mjs --strict",
     "lint": "node tools/design-lint/lint.mjs",
-    "check": "npm run tokens:check && npm run lint",
+    "check": "npm run tokens:check && npm run lint && npm run test:figma",
+    "test:figma": "node tools/figma-plugin/test-sync.mjs",
     "test:browser": "node tools/design-lint/browser-audit.mjs",
     "verify": "npm run check && npm run test:browser"
   },

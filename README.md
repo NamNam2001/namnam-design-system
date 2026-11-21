@@ -26,6 +26,18 @@ Fonts and icons load from Google Fonts; offline, text falls back to sans-serif a
 Load `build/web/tokens.css` and set attributes on `<html>`: `data-theme="dark|light"` and `data-platform="web|embedded-7in"`.
 Either attribute may be omitted: a missing theme falls back to `dark`, a missing platform to `web`.
 
+## Figma
+
+The Figma file is generated from the tokens by the NamNam Figma plugin (phase 1: variables + Foundations page).
+
+1. `npm run tokens` (builds `build/figma/code.js` with the current tokens).
+2. Figma **desktop** app, in the target file: **Plugins → Development → Import plugin from manifest…** → `build/figma/manifest.json` (once).
+3. **Plugins → Development → NamNam Design System Sync**. It creates or updates the variable collections
+   (`NN · Primitives / Base / Theme / Platform / Components`, aliases kept, `var(--nn-*)` code syntax) and regenerates
+   the **NamNam · Foundations** page (dark and light side by side).
+
+Re-run step 3 after every token change. Share the file with a view link for clients; devs use the specimens and `build/`.
+
 ## Naming (playbook §3.3)
 
 Everything exported carries the system prefix, so NamNam can live inside other web apps or LVGL projects without collisions.
